@@ -58,6 +58,13 @@ function slug(name: string): string {
 /** The seed query. Deliberately specific — vague queries return blog posts. */
 export function seedQuery(need: HelpNeed): string {
   const diet = need.diet === "any" ? "" : `${need.diet} `;
+  const who: Record<string, string> = {
+    student: " including campus and student food pantries,",
+    parent: " including family and children's meal programs,",
+    senior: " including senior meal and congregate dining programs,",
+    veteran: " including veteran food and meal services,",
+    unhoused: " that require no address or ID,",
+  };
   const when =
     need.urgency === "tonight"
       ? "open tonight"
@@ -67,7 +74,7 @@ export function seedQuery(need: HelpNeed): string {
   // Prefer the sources cities actually point residents to — food-bank
   // pantry locators (e.g. FoodNow.net), 211 directories, city service
   // lists — over aggregator blog posts, which are where stale hours live.
-  return `free ${diet}food assistance near ${need.locationText}: food pantries, community kitchens and free meal programs ${when}. Prefer official sources: the regional food bank's pantry directory, the local 211 resource directory, and city government food-assistance pages. Include name, street address, hours of operation, eligibility requirements and whether walk-ins are accepted.`;
+  return `free ${diet}food assistance near ${need.locationText}: food pantries, community kitchens and free meal programs${who[need.who ?? ""] ?? ""} ${when}. Prefer official sources: the regional food bank's pantry directory, the local 211 resource directory, and city government food-assistance pages. Include name, street address, hours of operation, eligibility requirements and whether walk-ins are accepted.`;
 }
 
 function toResource(raw: RawResource, index: number): Resource {

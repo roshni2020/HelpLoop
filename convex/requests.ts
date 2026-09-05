@@ -44,6 +44,7 @@ export const create = mutation({
     diet: v.string(),
     transport: v.string(),
     urgency: v.string(),
+    who: v.optional(v.string()),
     matchScore: v.optional(v.number()),
     matchReason: v.optional(v.string()),
     resource: resourceValidator,

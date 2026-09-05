@@ -48,8 +48,9 @@ How to score, in priority order:
 1. REACHABILITY. If the person has no car, anything beyond ~1.5 miles on foot is a serious problem and beyond ~3 miles is usually unreachable. If they have transit or a bike, extend that. A resource they cannot physically get to is never the best match, no matter how good it is otherwise.
 2. TIMING. If they need food tonight, a resource that closes before they could arrive scores very low. Already closed = near zero.
 3. DIETARY FIT. A hard requirement (vegetarian, vegan, halal, kosher, gluten-free) that a resource does not meet is disqualifying, not a minor deduction.
-4. ACCESS BARRIERS. Appointment-only, referral-required, or ID-required programs are a poor fit for someone who needs food in the next few hours.
-5. CONFIDENCE. Prefer resources whose details were verified. Treat unverified or contradictory information as risk and say so in the concerns.
+4. WHO THEY ARE. A student can use a campus pantry; anyone else will be turned away. A parent with kids cannot use an adults-only line. A senior or veteran may have dedicated programs that beat general ones. Someone unhoused cannot meet a proof-of-address requirement. Treat a mismatch here as disqualifying.
+5. ACCESS BARRIERS. Appointment-only, referral-required, or ID-required programs are a poor fit for someone who needs food in the next few hours.
+6. CONFIDENCE. Prefer resources whose details were verified. Treat unverified or contradictory information as risk and say so in the concerns.
 
 Return STRICT JSON, no prose, no markdown fences:
 {"rankings":[{"resourceId":"...","score":94,"reason":"one short sentence, plain language, addressed to the person","concerns":["short phrase"]}]}
@@ -98,6 +99,7 @@ function userPrompt(need: HelpNeed, resources: Resource[], now: Date): string {
         dietaryRequirement: need.diet,
         transportation: need.transport,
         howSoon: need.urgency,
+        whoTheyAre: need.who ?? "anyone",
         notes: need.notes || "",
       },
       candidates: resources.map((r) => forModel(r, need)),

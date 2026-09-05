@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Button, Field, Panel, PanelHeader, Select, TextInput } from "./ui";
-import type { Diet, HelpNeed, Transport, Urgency } from "@/lib/types";
+import { WHO_OPTIONS, type Diet, type HelpNeed, type Transport, type Urgency, type Who } from "@/lib/types";
 
 const DIETS: { value: Diet; label: string }[] = [
   { value: "any", label: "No restriction" },
@@ -39,6 +39,7 @@ export default function RequestHelpForm({
   const [transport, setTransport] = useState<Transport>("walking");
   const [urgency, setUrgency] = useState<Urgency>("tonight");
   const [notes, setNotes] = useState("");
+  const [who, setWho] = useState<Who>("anyone");
 
   return (
     <Panel className="hl-rise overflow-hidden">
@@ -59,6 +60,7 @@ export default function RequestHelpForm({
             diet,
             transport,
             urgency,
+            who,
             notes: notes.trim() || undefined,
           });
         }}
@@ -77,6 +79,26 @@ export default function RequestHelpForm({
             More soon
           </div>
         </div>
+
+        <Field label="Who are you?" hint="changes which doors are open">
+          <div className="grid grid-cols-2 gap-1.5">
+            {WHO_OPTIONS.map((o) => (
+              <button
+                key={o.value}
+                type="button"
+                title={o.hint}
+                onClick={() => setWho(o.value)}
+                className={`rounded-lg border px-2 py-1.5 text-left text-[11.5px] font-semibold leading-tight transition ${
+                  who === o.value
+                    ? "border-violet-400/60 bg-violet-500/20 text-violet-100"
+                    : "border-white/10 bg-white/[0.03] text-mist-400 hover:border-white/25"
+                }`}
+              >
+                {o.label}
+              </button>
+            ))}
+          </div>
+        </Field>
 
         <Field label="I need">
           <TextInput

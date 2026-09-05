@@ -56,6 +56,7 @@ function normalize(body: Record<string, unknown>): HelpNeed {
     diet: (str(body.diet, "any") as HelpNeed["diet"]) ?? "any",
     transport: (str(body.transport, "walking") as HelpNeed["transport"]) ?? "walking",
     urgency: (str(body.urgency, "tonight") as HelpNeed["urgency"]) ?? "tonight",
+    who: (str(body.who, "anyone") as HelpNeed["who"]) ?? "anyone",
     notes: str(body.notes),
   };
 }

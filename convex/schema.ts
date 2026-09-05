@@ -25,6 +25,7 @@ export default defineSchema({
     diet: v.string(),
     transport: v.string(),
     urgency: v.string(),
+    who: v.optional(v.string()),
     status: statusValidator,
     volunteerId: v.optional(v.string()),
     volunteerName: v.optional(v.string()),

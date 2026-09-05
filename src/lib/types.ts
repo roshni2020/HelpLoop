@@ -15,6 +15,18 @@ export type Transport = "walking" | "transit" | "bike" | "car";
 
 export type Urgency = "tonight" | "today" | "this-week";
 
+/** Who is asking — it changes which doors are open to them. */
+export type Who = "anyone" | "student" | "parent" | "senior" | "veteran" | "unhoused";
+
+export const WHO_OPTIONS: { value: Who; label: string; hint: string }[] = [
+  { value: "anyone", label: "Just someone who needs a meal", hint: "no special programs" },
+  { value: "student", label: "Student", hint: "campus pantries open up" },
+  { value: "parent", label: "Parent with kids", hint: "family programs, no adults-only lines" },
+  { value: "senior", label: "Senior (60+)", hint: "senior meal programs" },
+  { value: "veteran", label: "Veteran", hint: "veteran services" },
+  { value: "unhoused", label: "Currently unhoused", hint: "no address or ID needed" },
+];
+
 /** What the person needing help told us. */
 export interface HelpNeed {
   need: string;
@@ -24,6 +36,7 @@ export interface HelpNeed {
   diet: Diet;
   transport: Transport;
   urgency: Urgency;
+  who?: Who;
   notes?: string;
 }
 
@@ -145,6 +158,7 @@ export interface HelpRequest {
   diet: Diet;
   transport: Transport;
   urgency: Urgency;
+  who?: string;
   status: RequestStatus;
   volunteerId?: string;
   volunteerName?: string;

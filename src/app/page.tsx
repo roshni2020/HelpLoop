@@ -93,6 +93,7 @@ export default function RequesterPage() {
           diet: need.diet,
           transport: need.transport,
           urgency: need.urgency,
+          who: need.who,
           matchScore: rank?.score,
           matchReason: rank?.reason,
           resource: {

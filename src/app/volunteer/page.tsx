@@ -411,6 +411,7 @@ function OpenRequestCard({
       </div>
 
       <div className="mt-2 flex flex-wrap gap-1">
+        {request.who && request.who !== "anyone" && <Chip tone="brand">{request.who}</Chip>}
         {request.diet !== "any" && <Chip tone="brand">{request.diet}</Chip>}
         <Chip>{TRANSPORT_LABEL[request.transport] ?? request.transport}</Chip>
         <Chip tone={request.urgency === "tonight" ? "bad" : "neutral"}>{request.urgency}</Chip>
