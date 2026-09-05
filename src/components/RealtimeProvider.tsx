@@ -24,7 +24,7 @@ import {
 import { ConvexProvider, ConvexReactClient, useMutation, useQuery } from "convex/react";
 import { anyApi } from "convex/server";
 import { localStore } from "@/lib/local-store";
-import type { Contact, HelpRequest, RequestStatus, Tracking, VolunteerPublic } from "@/lib/types";
+import type { Contact, HelpRequest, Offer, RequestStatus, Tracking, VolunteerPublic } from "@/lib/types";
 
 // Untyped function references: they resolve at runtime against whatever
 // `npx convex dev` deployed, so the app compiles before codegen has run.
@@ -33,6 +33,7 @@ const api = anyApi as unknown as {
   volunteers: Record<string, never>;
   bots: Record<string, never>;
   tracking: Record<string, never>;
+  offers: Record<string, never>;
 };
 
 export type RealtimeMode = "convex" | "local";
@@ -42,6 +43,13 @@ export interface RealtimeApi {
   ready: boolean;
   requests: HelpRequest[];
   volunteers: VolunteerPublic[];
+  /** Live food offers with meals still remaining. */
+  offers: Offer[];
+  createOffer(
+    input: Omit<Offer, "_id" | "remaining" | "claims" | "createdAt" | "hasPhone"> & { phone?: string },
+  ): Promise<string>;
+  claimOffer(offerId: string, requestId: string): Promise<{ ok: boolean; reason?: string }>;
+  closeOffer(offerId: string): Promise<void>;
   /** Simulated volunteers are a Convex feature; false on the local shim. */
   botsSupported: boolean;
   botCount: number;
@@ -138,6 +146,7 @@ function ConvexRealtime({ children }: { children: ReactNode }) {
   const requests = useQuery(api.requests.list as never, {}) as HelpRequest[] | undefined;
   const volunteers = useQuery(api.volunteers.list as never, {}) as VolunteerPublic[] | undefined;
   const botCount = useQuery(api.bots.count as never, {}) as number | undefined;
+  const offers = useQuery(api.offers.listActive as never, {}) as Offer[] | undefined;
 
   const createMutation = useMutation(api.requests.create as never);
   const acceptMutation = useMutation(api.requests.accept as never);
@@ -148,6 +157,9 @@ function ConvexRealtime({ children }: { children: ReactNode }) {
   const updateLocationMutation = useMutation(api.volunteers.updateLocation as never);
   const seedBotsMutation = useMutation(api.bots.seed as never);
   const clearBotsMutation = useMutation(api.bots.clear as never);
+  const createOfferMutation = useMutation(api.offers.create as never);
+  const claimOfferMutation = useMutation(api.offers.claim as never);
+  const closeOfferMutation = useMutation(api.offers.close as never);
 
   const value = useMemo<RealtimeApi>(
     () => ({
@@ -157,6 +169,19 @@ function ConvexRealtime({ children }: { children: ReactNode }) {
       volunteers: volunteers ?? [],
       botsSupported: true,
       botCount: botCount ?? 0,
+      offers: offers ?? [],
+      async createOffer(input) {
+        return String(await createOfferMutation(input as never));
+      },
+      async claimOffer(offerId, requestId) {
+        const res = (await claimOfferMutation({ id: offerId, requestId } as never)) as
+          | { ok: boolean; reason?: string }
+          | undefined;
+        return res ?? { ok: true };
+      },
+      async closeOffer(offerId) {
+        await closeOfferMutation({ id: offerId } as never);
+      },
       async createRequest(input) {
         const { resource, ...rest } = input;
         const result = await createMutation({
@@ -209,7 +234,11 @@ function ConvexRealtime({ children }: { children: ReactNode }) {
       requests,
       volunteers,
       botCount,
+      offers,
       createMutation,
+      createOfferMutation,
+      claimOfferMutation,
+      closeOfferMutation,
       acceptMutation,
       advanceMutation,
       rateMutation,
@@ -263,6 +292,12 @@ function LocalRealtime({ children }: { children: ReactNode }) {
       volunteers: snapshot.volunteers,
       botsSupported: false,
       botCount: 0,
+      offers: [],
+      createOffer: async () => {
+        throw new Error("Offers need Convex");
+      },
+      claimOffer: async () => ({ ok: true }),
+      closeOffer: noop,
       createRequest,
       accept,
       advance,

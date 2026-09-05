@@ -279,6 +279,7 @@ export default function VolunteerPage() {
         requests={realtime.requests}
         onSelectRequest={setFocusId}
         volunteers={realtime.volunteers}
+        offers={realtime.offers}
         selfVolunteerId={docId}
         mission={mission}
       />

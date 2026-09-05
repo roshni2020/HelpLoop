@@ -15,6 +15,7 @@ interface StatusPayload {
 const LINKS = [
   { href: "/", label: "Need help" },
   { href: "/volunteer", label: "Volunteer" },
+  { href: "/offer", label: "Offer food" },
   { href: "/eval", label: "Model eval" },
   { href: "/about", label: "About" },
 ];

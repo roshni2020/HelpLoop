@@ -244,6 +244,24 @@ export interface Tracking {
   ratingCount?: number;
 }
 
+/** A live food offer from a restaurant, kitchen or neighbour. */
+export interface Offer {
+  _id: string;
+  providerName: string;
+  foodType: string;
+  quantity: number;
+  remaining: number;
+  claims: number;
+  locationText: string;
+  lat: number;
+  lng: number;
+  availableUntil: number;
+  dietary: string[];
+  instructions?: string;
+  hasPhone?: boolean;
+  createdAt: number;
+}
+
 /** Contact details for a matched pair — only the other side's number. */
 export interface Contact {
   requesterPhone: string | null;

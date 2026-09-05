@@ -18,7 +18,7 @@ import { useEffect, useMemo, useRef } from "react";
 import maplibregl, { type Map as MLMap } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { useTheme, type Theme } from "./ThemeProvider";
-import type { HelpRequest, Resource, VolunteerPublic } from "@/lib/types";
+import type { HelpRequest, Offer, Resource, VolunteerPublic } from "@/lib/types";
 
 // Light: OpenFreeMap "Liberty" - full-colour OSM cartography, keyless, and
 // it carries building heights so the 3D extrusions work. Dark: CARTO's
@@ -57,6 +57,8 @@ export interface MapCanvasProps {
   volunteers?: VolunteerPublic[];
   /** The viewer's own volunteer row — drawn from `origin` instead, so skip it here. */
   selfVolunteerId?: string | null;
+  /** Live food offers; they vanish from the map as they run out. */
+  offers?: Offer[];
   mission?: MissionState | null;
   className?: string;
 }
@@ -79,6 +81,7 @@ export default function MapCanvas({
   selfRequestId,
   volunteers = [],
   selfVolunteerId,
+  offers = [],
   mission,
   className = "",
 }: MapCanvasProps) {
@@ -196,6 +199,7 @@ export default function MapCanvas({
         selfRequestId,
         volunteers,
         selfVolunteerId,
+        offers,
       }),
     [
       origin,
@@ -207,6 +211,7 @@ export default function MapCanvas({
       selfRequestId,
       volunteers,
       selfVolunteerId,
+      offers,
     ],
   );
 
@@ -670,6 +675,7 @@ function buildMarkerSpecs(args: {
   selfRequestId?: string | null;
   volunteers: VolunteerPublic[];
   selfVolunteerId?: string | null;
+  offers?: Offer[];
 }): MarkerSpec[] {
   const specs: MarkerSpec[] = [];
   const {
@@ -682,6 +688,7 @@ function buildMarkerSpecs(args: {
     selfRequestId,
     volunteers,
     selfVolunteerId,
+    offers = [],
   } = args;
 
   if (origin) {
@@ -769,6 +776,23 @@ function buildMarkerSpecs(args: {
         label: res.name.length > 24 ? res.name.slice(0, 23) + "…" : res.name,
       });
     }
+  }
+
+  // Live food offers. Label carries the count, so watching it drop IS the demo.
+  for (const o of offers) {
+    const until = new Date(o.availableUntil).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+    specs.push({
+      id: `offer:${o._id}`,
+      key: `offer:${o._id}:${o.remaining}`,
+      kind: "resource",
+      refId: `offer-${o._id}`,
+      lat: o.lat,
+      lng: o.lng,
+      emoji: "🍱",
+      color: "#21e39a",
+      label: `${o.remaining} meals · ${o.providerName}`,
+      badge: `until ${until}`,
+    });
   }
 
   // Volunteers at their ROUNDED positions (the server never sends exact).

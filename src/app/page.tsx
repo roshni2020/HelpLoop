@@ -110,6 +110,11 @@ export default function RequesterPage() {
             confidence: resource.confidence,
           },
         });
+        // If they picked a live offer, take one meal off its count.
+        if (resource.id.startsWith("offer-")) {
+          const res = await realtime.claimOffer(resource.id.slice("offer-".length), id);
+          if (!res.ok) console.warn("[offer] claim failed:", res.reason);
+        }
         window.localStorage.setItem(MY_REQUEST_KEY, id);
         setMyRequestId(id);
       } finally {
@@ -171,6 +176,7 @@ export default function RequesterPage() {
         requests={realtime.requests}
         selfRequestId={myRequestId}
         volunteers={realtime.volunteers}
+        offers={realtime.offers}
         mission={mission}
       />
 

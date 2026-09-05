@@ -38,6 +38,8 @@ export default defineSchema({
     rating: v.optional(v.number()),
     /** Optional. Served to the assigned volunteer only (see requests.list). */
     requesterPhone: v.optional(v.string()),
+    /** Set when the chosen resource was a live food offer. */
+    offerId: v.optional(v.id("offers")),
     resource: v.object({
       id: v.string(),
       name: v.string(),
@@ -80,6 +82,25 @@ export default defineSchema({
   })
     .index("by_available", ["available"])
     .index("by_bot", ["isBot"]),
+
+  // Food offered by a restaurant, kitchen or neighbour. `remaining` is the
+  // live count; the pin disappears at zero or when the window closes.
+  offers: defineTable({
+    providerName: v.string(),
+    foodType: v.string(),
+    quantity: v.number(),
+    remaining: v.number(),
+    claims: v.number(),
+    locationText: v.string(),
+    lat: v.number(),
+    lng: v.number(),
+    availableUntil: v.number(),
+    dietary: v.array(v.string()),
+    instructions: v.optional(v.string()),
+    /** Optional. Never listed; only the matched volunteer may see it. */
+    phone: v.optional(v.string()),
+    createdAt: v.number(),
+  }),
 
   // Research findings kept alongside the request, so a volunteer can see
   // exactly what was verified about the place they are being sent to.

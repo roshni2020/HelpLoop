@@ -30,12 +30,68 @@ import {
 } from "./linkup";
 import { DEMO_NOTICE, demoSeed, type DemoResource } from "./demo-data";
 import { rankResources } from "./nebius";
+import { ConvexHttpClient } from "convex/browser";
+import { anyApi } from "convex/server";
 import type {
   HelpNeed,
   ResearchEvent,
   ResearchFinding,
   Resource,
 } from "./types";
+
+/**
+ * Live food offers near the person, shaped as resources. Provider-posted,
+ * so they arrive already verified: hours, walk-in and location are facts
+ * the provider typed, not things we had to research.
+ */
+async function liveOffers(need: HelpNeed, origin: { lat: number; lng: number }): Promise<Resource[]> {
+  const url = process.env.NEXT_PUBLIC_CONVEX_URL?.trim();
+  if (!url || need.category !== "food") return [];
+  try {
+    const client = new ConvexHttpClient(url);
+    const api = anyApi as unknown as { offers: { listActive: never } };
+    const rows = (await client.query(api.offers.listActive, {})) as Array<{
+      _id: string; providerName: string; foodType: string; remaining: number; quantity: number;
+      locationText: string; lat: number; lng: number; availableUntil: number; dietary: string[];
+      instructions?: string;
+    }>;
+    return rows
+      .map((o) => ({ o, d: distanceMiles(origin, o) }))
+      .filter(({ d }) => d <= 10)
+      .sort((a, b) => a.d - b.d)
+      .slice(0, 3)
+      .map(({ o, d }) => {
+        const until = new Date(o.availableUntil);
+        const closes = until.getHours() * 60 + until.getMinutes();
+        return {
+          id: `offer-${o._id}`,
+          name: `${o.providerName} (${o.remaining} ${o.foodType} left)`,
+          address: o.locationText,
+          lat: o.lat,
+          lng: o.lng,
+          distanceMiles: d,
+          hours: `Today until ${formatMinutesLocal(closes)}`,
+          closesAtMinutes: closes,
+          eligibility: "Open to anyone - food offered by a local provider" + (o.instructions ? `. ${o.instructions}` : ""),
+          foodTypes: [o.foodType.toLowerCase(), ...o.dietary],
+          walkIn: true,
+          sources: ["provider-posted"],
+          confidence: 1,
+          gaps: [],
+          conflicts: [],
+          verified: true,
+        } satisfies Resource;
+      });
+  } catch (err) {
+    console.warn("[research] could not load live offers:", err);
+    return [];
+  }
+}
+
+function formatMinutesLocal(mins: number): string {
+  const h = Math.floor(mins / 60) % 24, m = mins % 60;
+  return `${h % 12 === 0 ? 12 : h % 12}${m ? ":" + String(m).padStart(2, "0") : ""} ${h >= 12 ? "PM" : "AM"}`;
+}
 
 /** How many follow-up searches one request is allowed to spend. */
 const FOLLOWUP_BUDGET = 8;
@@ -225,6 +281,13 @@ export async function* runResearch(
 
     // ── Step 3: shape and place the candidates ────────────
     const resources: Resource[] = [];
+
+    // Live offers first: someone nearby has food right now.
+    for (const offer of await liveOffers(need, origin)) {
+      resources.push(offer);
+      yield { type: "status", message: `Live offer nearby: ${offer.name}`, icon: "🍱" };
+      yield { type: "resource", resource: { ...offer } };
+    }
     const demoScript = backend.live ? [] : demoSeed(need);
 
     for (const [i, raw] of raws.slice(0, MAX_RESOURCES).entries()) {
