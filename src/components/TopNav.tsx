@@ -16,6 +16,7 @@ const LINKS = [
   { href: "/", label: "Need help" },
   { href: "/volunteer", label: "Volunteer" },
   { href: "/eval", label: "Model eval" },
+  { href: "/about", label: "About" },
 ];
 
 const DEFAULT_CENTER = { lat: 37.8044, lng: -122.2712 };
