@@ -1,0 +1,622 @@
+{
+  "generatedAt": "2026-09-05T21:02:03.276Z",
+  "model": "openai/gpt-oss-120b",
+  "live": true,
+  "evaluatedAt": "2026-03-15T01:00:00.000Z",
+  "summary": {
+    "scenarios": 20,
+    "top1Correct": 18,
+    "top1Accuracy": 0.9,
+    "top2Correct": 20,
+    "top2Accuracy": 1,
+    "avgLatencyMs": 1614,
+    "p50LatencyMs": 1607,
+    "p95LatencyMs": 2308,
+    "totalTokens": 23214,
+    "avgCostUsd": 0.000267612,
+    "totalCostUsd": 0.00535224
+  },
+  "baseline": null,
+  "cases": [
+    {
+      "id": "s01-diet-over-distance",
+      "title": "Vegetarian, no car, needs food tonight",
+      "probe": "Does a hard dietary requirement outrank a slightly shorter walk?",
+      "expectedTopId": "a",
+      "expectedName": "Community Kitchen",
+      "predictedTopId": "a",
+      "predictedName": "Community Kitchen",
+      "correct": true,
+      "expectedInTop2": true,
+      "latencyMs": 2379,
+      "promptTokens": 813,
+      "completionTokens": 503,
+      "costUsd": 0.00030689000000000004,
+      "label": "A is the only one open tonight that confirms vegetarian food and is walkable.",
+      "modelReason": "Only 1.2 mi walk, open until 8 PM, vegetarian meals confirmed, walk‑in, high confidence",
+      "ranking": [
+        {
+          "id": "a",
+          "name": "Community Kitchen",
+          "score": 92
+        },
+        {
+          "id": "c",
+          "name": "Regional Food Bank",
+          "score": 68
+        },
+        {
+          "id": "b",
+          "name": "Corner Pantry",
+          "score": 12
+        }
+      ]
+    },
+    {
+      "id": "s02-already-closed",
+      "title": "Closest option already closed",
+      "probe": "Is a closed door correctly disqualifying at 6pm?",
+      "expectedTopId": "b",
+      "expectedName": "Evening Meal Program",
+      "predictedTopId": "b",
+      "predictedName": "Evening Meal Program",
+      "correct": true,
+      "expectedInTop2": true,
+      "latencyMs": 1379,
+      "promptTokens": 810,
+      "completionTokens": 404,
+      "costUsd": 0.00026690000000000004,
+      "label": "Only B is still serving at 6pm.",
+      "modelReason": "Open now (5 pm‑8 pm) and only 1.1 mi away, so you can walk there and get dinner tonight",
+      "ranking": [
+        {
+          "id": "b",
+          "name": "Evening Meal Program",
+          "score": 92
+        },
+        {
+          "id": "a",
+          "name": "Dawn Pantry",
+          "score": 15
+        },
+        {
+          "id": "c",
+          "name": "Midday Kitchen",
+          "score": 10
+        }
+      ]
+    },
+    {
+      "id": "s03-appointment-barrier",
+      "title": "Appointment-only vs. walk-in tonight",
+      "probe": "Does an access barrier outweigh a half-mile of distance?",
+      "expectedTopId": "b",
+      "expectedName": "Open Door Meals",
+      "predictedTopId": "b",
+      "predictedName": "Open Door Meals",
+      "correct": true,
+      "expectedInTop2": true,
+      "latencyMs": 1390,
+      "promptTokens": 705,
+      "completionTokens": 398,
+      "costUsd": 0.00025085000000000005,
+      "label": "Someone hungry tonight cannot obtain a referral in time.",
+      "modelReason": "Open Door Meals is 0.9 mi away, open until 8 PM, accepts walk‑ins and has no referral requirement, so you can get dinner tonight.",
+      "ranking": [
+        {
+          "id": "b",
+          "name": "Open Door Meals",
+          "score": 92
+        },
+        {
+          "id": "a",
+          "name": "Referral Pantry",
+          "score": 78
+        }
+      ]
+    },
+    {
+      "id": "s04-car-unlocks-distance",
+      "title": "Has a car, best option is further out",
+      "probe": "Does transport correctly relax the distance penalty?",
+      "expectedTopId": "b",
+      "expectedName": "Masjid Community Meal",
+      "predictedTopId": "b",
+      "predictedName": "Masjid Community Meal",
+      "correct": true,
+      "expectedInTop2": true,
+      "latencyMs": 1418,
+      "promptTokens": 705,
+      "completionTokens": 393,
+      "costUsd": 0.00024885,
+      "label": "With a car, 6.5 miles is fine and only B meets the halal requirement.",
+      "modelReason": "Your car can reach the 6.5‑mile Masjid Community Meal, it stays open until 9 PM, and it definitely offers halal food",
+      "ranking": [
+        {
+          "id": "b",
+          "name": "Masjid Community Meal",
+          "score": 92
+        },
+        {
+          "id": "a",
+          "name": "Nearby Pantry",
+          "score": 78
+        }
+      ]
+    },
+    {
+      "id": "s05-no-car-far-good-option",
+      "title": "Same pair, but no car",
+      "probe": "The mirror of s04 — unreachable beats well-matched.",
+      "expectedTopId": "a",
+      "expectedName": "Nearby Pantry",
+      "predictedTopId": "a",
+      "predictedName": "Nearby Pantry",
+      "correct": true,
+      "expectedInTop2": true,
+      "latencyMs": 1390,
+      "promptTokens": 709,
+      "completionTokens": 354,
+      "costUsd": 0.00023377,
+      "label": "6.5 miles on foot is not reachable tonight; A also offers halal.",
+      "modelReason": "Only 0.7 mi away, open until 7 PM, halal meals, walk‑in, good confidence",
+      "ranking": [
+        {
+          "id": "a",
+          "name": "Nearby Pantry",
+          "score": 92
+        },
+        {
+          "id": "b",
+          "name": "Masjid Community Meal",
+          "score": 10
+        }
+      ]
+    },
+    {
+      "id": "s06-closing-too-soon",
+      "title": "Open, but closing in 20 minutes",
+      "probe": "Is a closing-soon window discounted against a comfortable one?",
+      "expectedTopId": "b",
+      "expectedName": "Late Kitchen",
+      "predictedTopId": "a",
+      "predictedName": "Last Call Pantry",
+      "correct": false,
+      "expectedInTop2": true,
+      "latencyMs": 1764,
+      "promptTokens": 699,
+      "completionTokens": 451,
+      "costUsd": 0.00027127,
+      "label": "A mile on foot takes longer than the 20 minutes A has left.",
+      "modelReason": "1 mile walk, open until 6:20 PM so you can arrive now, walk‑in, no dietary limits",
+      "ranking": [
+        {
+          "id": "a",
+          "name": "Last Call Pantry",
+          "score": 92
+        },
+        {
+          "id": "b",
+          "name": "Late Kitchen",
+          "score": 88
+        }
+      ]
+    },
+    {
+      "id": "s07-student-id-required",
+      "title": "Non-student sent to a campus pantry",
+      "probe": "Is an eligibility rule the person fails treated as blocking?",
+      "expectedTopId": "b",
+      "expectedName": "Neighborhood Meal",
+      "predictedTopId": "b",
+      "predictedName": "Neighborhood Meal",
+      "correct": true,
+      "expectedInTop2": true,
+      "latencyMs": 1658,
+      "promptTokens": 712,
+      "completionTokens": 493,
+      "costUsd": 0.00028976,
+      "label": "The person is not enrolled, so A would turn them away.",
+      "modelReason": "Only 1.4 mi walk, open 5‑8 PM so you can get dinner before it closes, no ID needed, and walk‑in is allowed.",
+      "ranking": [
+        {
+          "id": "b",
+          "name": "Neighborhood Meal",
+          "score": 88
+        },
+        {
+          "id": "a",
+          "name": "Campus Pantry",
+          "score": 32
+        }
+      ]
+    },
+    {
+      "id": "s08-unverified-vs-verified",
+      "title": "Verified nearby vs. unverified nearer",
+      "probe": "Does low research confidence cost a resource the top slot?",
+      "expectedTopId": "b",
+      "expectedName": "Confirmed Kitchen",
+      "predictedTopId": "b",
+      "predictedName": "Confirmed Kitchen",
+      "correct": true,
+      "expectedInTop2": true,
+      "latencyMs": 1324,
+      "promptTokens": 688,
+      "completionTokens": 335,
+      "costUsd": 0.00022344000000000002,
+      "label": "Sending someone to an unverified address on an empty stomach is the worse error.",
+      "modelReason": "Open now until 8 PM, 1 mile away, walk‑in allowed and high confidence info",
+      "ranking": [
+        {
+          "id": "b",
+          "name": "Confirmed Kitchen",
+          "score": 92
+        },
+        {
+          "id": "a",
+          "name": "Rumoured Fridge",
+          "score": 31
+        }
+      ]
+    },
+    {
+      "id": "s09-open-conflict",
+      "title": "Unresolved conflict about access",
+      "probe": "Is an open contradiction penalised versus a clean record?",
+      "expectedTopId": "b",
+      "expectedName": "Steady Meals",
+      "predictedTopId": "b",
+      "predictedName": "Steady Meals",
+      "correct": true,
+      "expectedInTop2": true,
+      "latencyMs": 1152,
+      "promptTokens": 716,
+      "completionTokens": 290,
+      "costUsd": 0.00020908,
+      "label": "B is nearly as close and carries no risk of being turned away.",
+      "modelReason": "Close, open now, walk‑in accepted and high confidence info",
+      "ranking": [
+        {
+          "id": "b",
+          "name": "Steady Meals",
+          "score": 92
+        },
+        {
+          "id": "a",
+          "name": "Disputed Pantry",
+          "score": 78
+        }
+      ]
+    },
+    {
+      "id": "s10-vegan-strict",
+      "title": "Vegan requirement, mixed boxes elsewhere",
+      "probe": "Is 'not guaranteed' treated as not meeting a strict requirement?",
+      "expectedTopId": "a",
+      "expectedName": "Plant Plate Kitchen",
+      "predictedTopId": "a",
+      "predictedName": "Plant Plate Kitchen",
+      "correct": true,
+      "expectedInTop2": true,
+      "latencyMs": 1872,
+      "promptTokens": 709,
+      "completionTokens": 518,
+      "costUsd": 0.00029937000000000003,
+      "label": "Only A guarantees vegan food; a mixed box may contain nothing edible for them.",
+      "modelReason": "Within walking distance (1.6 mi, a bit over the ideal 1.5 mi) and open until 8:30 PM, offers confirmed vegan meals, walk‑in access.",
+      "ranking": [
+        {
+          "id": "a",
+          "name": "Plant Plate Kitchen",
+          "score": 84
+        },
+        {
+          "id": "b",
+          "name": "Mixed Grocery Box",
+          "score": 61
+        }
+      ]
+    },
+    {
+      "id": "s11-transit-middle-distance",
+      "title": "Bus available, mid-distance best fit",
+      "probe": "Does transit correctly sit between walking and driving?",
+      "expectedTopId": "a",
+      "expectedName": "Transit Line Kitchen",
+      "predictedTopId": "a",
+      "predictedName": "Transit Line Kitchen",
+      "correct": true,
+      "expectedInTop2": true,
+      "latencyMs": 1916,
+      "promptTokens": 711,
+      "completionTokens": 541,
+      "costUsd": 0.00030883000000000006,
+      "label": "3.2 miles is a short bus ride, and B closes in minutes with no vegetarian option.",
+      "modelReason": "Transit can reach 3.2 mi, open until 9 PM, confirmed vegetarian meals, walk‑in, decent confidence",
+      "ranking": [
+        {
+          "id": "a",
+          "name": "Transit Line Kitchen",
+          "score": 92
+        },
+        {
+          "id": "b",
+          "name": "Corner Store Pantry",
+          "score": 35
+        }
+      ]
+    },
+    {
+      "id": "s12-tie-break-on-hours",
+      "title": "Two near-identical options",
+      "probe": "Does a longer open window break an otherwise even tie?",
+      "expectedTopId": "b",
+      "expectedName": "South Meals",
+      "predictedTopId": "b",
+      "predictedName": "South Meals",
+      "correct": true,
+      "expectedInTop2": true,
+      "latencyMs": 1342,
+      "promptTokens": 700,
+      "completionTokens": 346,
+      "costUsd": 0.0002294,
+      "label": "Identical except B gives the person nearly two more hours.",
+      "modelReason": "South Meals is a 1‑mile walk, open until 8:30 PM so you have plenty of time to get dinner tonight",
+      "ranking": [
+        {
+          "id": "b",
+          "name": "South Meals",
+          "score": 85
+        },
+        {
+          "id": "a",
+          "name": "North Meals",
+          "score": 78
+        }
+      ]
+    },
+    {
+      "id": "s13-this-week-flexibility",
+      "title": "Not urgent — best programme wins",
+      "probe": "When timing is loose, does quality of fit take over?",
+      "expectedTopId": "a",
+      "expectedName": "Weekly Grocery Program",
+      "predictedTopId": "b",
+      "predictedName": "Tonight Only Soup Line",
+      "correct": false,
+      "expectedInTop2": true,
+      "latencyMs": 1187,
+      "promptTokens": 711,
+      "completionTokens": 330,
+      "costUsd": 0.00022443000000000002,
+      "label": "With a week of flexibility, a full grocery pickup beats one bowl of soup.",
+      "modelReason": "Open now (6‑7 PM), only 1.1 mi away, walk‑in allowed, and provides food you can eat tonight.",
+      "ranking": [
+        {
+          "id": "b",
+          "name": "Tonight Only Soup Line",
+          "score": 92
+        },
+        {
+          "id": "a",
+          "name": "Weekly Grocery Program",
+          "score": 10
+        }
+      ]
+    },
+    {
+      "id": "s14-gluten-free",
+      "title": "Coeliac, needs certainty",
+      "probe": "Is an explicit gluten-free provision preferred over proximity?",
+      "expectedTopId": "b",
+      "expectedName": "Allergy Aware Pantry",
+      "predictedTopId": "b",
+      "predictedName": "Allergy Aware Pantry",
+      "correct": true,
+      "expectedInTop2": true,
+      "latencyMs": 1790,
+      "promptTokens": 716,
+      "completionTokens": 471,
+      "costUsd": 0.00028148,
+      "label": "A's stock is exactly what they cannot eat.",
+      "modelReason": "Within walking distance, open until 7:30 PM, confirmed gluten‑free options, walk‑in access.",
+      "ranking": [
+        {
+          "id": "b",
+          "name": "Allergy Aware Pantry",
+          "score": 92
+        },
+        {
+          "id": "a",
+          "name": "Bread Line",
+          "score": 28
+        }
+      ]
+    },
+    {
+      "id": "s15-all-poor-least-bad",
+      "title": "Every option is flawed",
+      "probe": "Can it pick the least-bad option instead of refusing?",
+      "expectedTopId": "c",
+      "expectedName": "Near Appointment Pantry",
+      "predictedTopId": "c",
+      "predictedName": "Near Appointment Pantry",
+      "correct": true,
+      "expectedInTop2": true,
+      "latencyMs": 1623,
+      "promptTokens": 813,
+      "completionTokens": 447,
+      "costUsd": 0.00028449000000000004,
+      "label": "C is open, close and vegetarian; the appointment rule is the only barrier and is worth a phone call.",
+      "modelReason": "Only 0.7 mi away (walkable) and open until 8 PM, so you can get there tonight despite the appointment requirement.",
+      "ranking": [
+        {
+          "id": "c",
+          "name": "Near Appointment Pantry",
+          "score": 85
+        },
+        {
+          "id": "b",
+          "name": "Near Closed Pantry",
+          "score": 60
+        },
+        {
+          "id": "a",
+          "name": "Far Vegetarian Kitchen",
+          "score": 10
+        }
+      ]
+    },
+    {
+      "id": "s16-bike-range",
+      "title": "Bike widens the range",
+      "probe": "Does a bike unlock a 3-mile option a walker could not reach?",
+      "expectedTopId": "a",
+      "expectedName": "Crosstown Veg Kitchen",
+      "predictedTopId": "a",
+      "predictedName": "Crosstown Veg Kitchen",
+      "correct": true,
+      "expectedInTop2": true,
+      "latencyMs": 2045,
+      "promptTokens": 707,
+      "completionTokens": 564,
+      "costUsd": 0.00031751,
+      "label": "Three miles is a 15-minute ride, and only A actually feeds them tonight.",
+      "modelReason": "Bike can reach the 3‑mile site, it stays open until 9 PM, and it explicitly offers vegetarian hot meals with walk‑in access.",
+      "ranking": [
+        {
+          "id": "a",
+          "name": "Crosstown Veg Kitchen",
+          "score": 92
+        },
+        {
+          "id": "b",
+          "name": "Local Canned Goods",
+          "score": 68
+        }
+      ]
+    },
+    {
+      "id": "s17-hours-unknown",
+      "title": "Unknown hours vs. known hours",
+      "probe": "Is a documented open window preferred over an unknown one?",
+      "expectedTopId": "b",
+      "expectedName": "Published Hours Kitchen",
+      "predictedTopId": "b",
+      "predictedName": "Published Hours Kitchen",
+      "correct": true,
+      "expectedInTop2": true,
+      "latencyMs": 1300,
+      "promptTokens": 693,
+      "completionTokens": 321,
+      "costUsd": 0.00021849,
+      "label": "A half-mile walk to a locked door is worse than a mile to an open one.",
+      "modelReason": "Open until 8 PM, only 1.2 mi away, walk‑in allowed and high confidence data",
+      "ranking": [
+        {
+          "id": "b",
+          "name": "Published Hours Kitchen",
+          "score": 92
+        },
+        {
+          "id": "a",
+          "name": "Unlisted Hours Pantry",
+          "score": 68
+        }
+      ]
+    },
+    {
+      "id": "s18-two-people-note",
+      "title": "Free-text note changes the answer",
+      "probe": "Are the person's own words used, not just the structured fields?",
+      "expectedTopId": "b",
+      "expectedName": "Family Dinner Program",
+      "predictedTopId": "b",
+      "predictedName": "Family Dinner Program",
+      "correct": true,
+      "expectedInTop2": true,
+      "latencyMs": 1443,
+      "promptTokens": 721,
+      "completionTokens": 346,
+      "costUsd": 0.00023213,
+      "label": "A would refuse them twice over — children and no ID.",
+      "modelReason": "Only 1.3 mi away, open now, families welcome and no ID needed, so you can get dinner tonight with your kids",
+      "ranking": [
+        {
+          "id": "b",
+          "name": "Family Dinner Program",
+          "score": 92
+        },
+        {
+          "id": "a",
+          "name": "Single Adult Meal",
+          "score": 78
+        }
+      ]
+    },
+    {
+      "id": "s19-kosher",
+      "title": "Kosher requirement",
+      "probe": "Is a named religious dietary requirement honoured?",
+      "expectedTopId": "b",
+      "expectedName": "Kosher Food Pantry",
+      "predictedTopId": "b",
+      "predictedName": "Kosher Food Pantry",
+      "correct": true,
+      "expectedInTop2": true,
+      "latencyMs": 1607,
+      "promptTokens": 711,
+      "completionTokens": 463,
+      "costUsd": 0.00027763,
+      "label": "Only B is kosher and it is within transit range.",
+      "modelReason": "Within transit range, open until 7:30 PM, confirmed kosher meals, walk‑in, decent confidence",
+      "ranking": [
+        {
+          "id": "b",
+          "name": "Kosher Food Pantry",
+          "score": 92
+        },
+        {
+          "id": "a",
+          "name": "General Soup Kitchen",
+          "score": 78
+        }
+      ]
+    },
+    {
+      "id": "s20-24h-fridge",
+      "title": "Late night, everything closed but one",
+      "probe": "Is a 24-hour resource recognised as the only live option?",
+      "expectedTopId": "a",
+      "expectedName": "Community Fridge",
+      "predictedTopId": "a",
+      "predictedName": "Community Fridge",
+      "correct": true,
+      "expectedInTop2": true,
+      "latencyMs": 2308,
+      "promptTokens": 819,
+      "completionTokens": 678,
+      "costUsd": 0.00037767000000000003,
+      "label": "The fridge is the only thing still accessible, and it needs no staff.",
+      "modelReason": "Only 1.1 mi away, open 24 h, walk‑in with no eligibility hurdles, so you can get food right now.",
+      "ranking": [
+        {
+          "id": "a",
+          "name": "Community Fridge",
+          "score": 95
+        },
+        {
+          "id": "c",
+          "name": "Evening Meal",
+          "score": 70
+        },
+        {
+          "id": "b",
+          "name": "Daytime Pantry",
+          "score": 10
+        }
+      ]
+    }
+  ]
+}

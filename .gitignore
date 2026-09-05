@@ -1,0 +1,11 @@
+node_modules/
+.next/
+out/
+build/
+.env
+.env.local
+.DS_Store
+*.tsbuildinfo
+.rocketride/
+convex/_generated/
+shots/

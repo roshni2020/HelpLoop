@@ -1,0 +1,44 @@
+{
+  "name": "helploop",
+  "version": "1.0.0",
+  "private": true,
+  "description": "HelpLoop - Find Help. Match Help. Move Help.",
+  "scripts": {
+    "dev": "next dev",
+    "dev:all": "concurrently -n next,convex -c cyan,magenta \"next dev\" \"convex dev\"",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "typecheck": "tsc --noEmit",
+    "convex": "convex dev",
+    "eval": "tsx scripts/eval.ts",
+    "check": "tsx scripts/check.ts",
+    "test": "tsx scripts/parse-check.ts && tsx scripts/salvage-check.ts && tsx scripts/noinfo-check.ts",
+    "nebius:hello": "tsx scripts/nebius-hello.ts",
+    "models": "tsx scripts/nebius-hello.ts --models",
+    "drive": "node scripts/drive.mjs"
+  },
+  "dependencies": {
+    "canvas-confetti": "^1.9.3",
+    "convex": "^1.17.4",
+    "maplibre-gl": "^5.1.0",
+    "next": "15.1.6",
+    "openai": "^4.80.1",
+    "react": "19.0.0",
+    "react-dom": "19.0.0",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.0.0",
+    "@types/canvas-confetti": "^1.9.0",
+    "@types/node": "^22.10.7",
+    "@types/react": "^19.0.7",
+    "@types/react-dom": "^19.0.3",
+    "concurrently": "^9.1.2",
+    "dotenv": "^16.4.7",
+    "playwright": "^1.63.0",
+    "tailwindcss": "^4.0.0",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.3"
+  }
+}

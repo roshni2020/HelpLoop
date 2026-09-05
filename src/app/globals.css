@@ -1,0 +1,459 @@
+@import "tailwindcss";
+
+/* ─────────────────────────────────────────────────────────────
+   HelpLoop design tokens.
+   Night-city palette: the map is the product, so the chrome around
+   it stays dark and lets the markers carry the colour.
+   ───────────────────────────────────────────────────────────── */
+
+@theme {
+  --color-ink-950: #05070f;
+  --color-ink-900: #090d1a;
+  --color-ink-800: #0f1424;
+  --color-ink-700: #171d31;
+  --color-ink-600: #232b45;
+  --color-ink-500: #38415f;
+  --color-mist-400: #8b95b5;
+  --color-mist-200: #c6cde3;
+
+  --color-help: #ff4d6d;
+  --color-resource: #ffb020;
+  --color-volunteer: #46b5ff;
+  --color-done: #21e39a;
+  --color-brand: #a78bfa;
+
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", "Cascadia Mono", Menlo, Consolas,
+    monospace;
+}
+
+/* ── Light mode ──────────────────────────────────────────────
+   Tailwind v4 compiles every utility against these variables, so
+   re-pointing them here re-skins the whole app: `ink` surfaces go
+   light, `white` becomes ink, and the pale accent shades (which are
+   tuned for dark glass) drop to their deep counterparts for contrast. */
+:root[data-theme="light"] {
+  --color-ink-950: #f3f5fa;
+  --color-ink-900: #ffffff;
+  --color-ink-800: #eef1f8;
+  --color-ink-700: #e3e8f2;
+  --color-ink-600: #cdd5e5;
+  --color-ink-500: #8a94b0;
+  --color-mist-400: #56607e;
+  --color-mist-200: #1d2540;
+  --color-white: #0f1424;
+
+  --color-emerald-300: #047857;
+  --color-emerald-200: #065f46;
+  --color-amber-300: #b45309;
+  --color-amber-200: #92400e;
+  --color-amber-100: #78350f;
+  --color-rose-300: #be123c;
+  --color-rose-200: #9f1239;
+  --color-sky-300: #0369a1;
+  --color-violet-300: #6d28d9;
+  --color-violet-200: #5b21b6;
+  --color-violet-100: #4c1d95;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--color-ink-950);
+  color: var(--color-mist-200);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  overflow: hidden;
+}
+
+/* Scrollbars that don't wreck the dark chrome */
+::-webkit-scrollbar {
+  width: 9px;
+  height: 9px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #232b45;
+  border-radius: 999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #38415f;
+}
+
+/* ── Map marker styling ─────────────────────────────────── */
+
+.hl-marker {
+  cursor: pointer;
+  will-change: transform;
+}
+
+.hl-pin {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50% 50% 50% 8px;
+  transform: rotate(-45deg);
+  font-size: 17px;
+  border: 2px solid rgba(255, 255, 255, 0.85);
+  box-shadow:
+    0 10px 22px -6px rgba(0, 0, 0, 0.85),
+    0 0 0 1px rgba(0, 0, 0, 0.35);
+  transition:
+    transform 180ms ease,
+    box-shadow 180ms ease;
+}
+
+.hl-pin > span {
+  transform: rotate(45deg);
+  line-height: 1;
+}
+
+.hl-marker:hover .hl-pin {
+  transform: rotate(-45deg) scale(1.12);
+}
+
+/* Idle volunteers: present but not competing with requests for attention. */
+.hl-pin--small {
+  width: 30px;
+  height: 30px;
+  font-size: 14px;
+  opacity: 0.92;
+}
+.hl-pin--small + .hl-label,
+.hl-pin--small ~ .hl-label {
+  top: 32px;
+  font-size: 10px;
+  opacity: 0.85;
+}
+
+.hl-pin--best {
+  box-shadow:
+    0 0 0 4px rgba(255, 176, 32, 0.22),
+    0 0 26px 4px rgba(255, 176, 32, 0.5),
+    0 10px 22px -6px rgba(0, 0, 0, 0.85);
+}
+
+.hl-pin--selected {
+  box-shadow:
+    0 0 0 5px rgba(167, 139, 250, 0.3),
+    0 10px 22px -6px rgba(0, 0, 0, 0.85);
+}
+
+.hl-badge {
+  position: absolute;
+  top: -8px;
+  right: -12px;
+  transform: none;
+  background: #0f1424;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  padding: 2px 6px;
+  border-radius: 999px;
+  white-space: nowrap;
+  font-family: var(--font-mono);
+}
+
+.hl-label {
+  position: absolute;
+  top: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(9, 13, 26, 0.92);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #dbe2f5;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 7px;
+  white-space: nowrap;
+  pointer-events: none;
+  backdrop-filter: blur(6px);
+}
+
+/* Urgent requests breathe until someone picks them up. */
+.hl-pulse::before {
+  content: "";
+  position: absolute;
+  inset: -6px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0.35;
+  animation: hl-ping 1.8s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+@keyframes hl-ping {
+  0% {
+    transform: scale(0.7);
+    opacity: 0.5;
+  }
+  80%,
+  100% {
+    transform: scale(2.4);
+    opacity: 0;
+  }
+}
+
+.hl-courier {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  background: linear-gradient(140deg, #46b5ff, #a78bfa);
+  border: 2px solid rgba(255, 255, 255, 0.9);
+  font-size: 16px;
+  box-shadow:
+    0 0 22px 4px rgba(70, 181, 255, 0.55),
+    0 8px 18px -6px rgba(0, 0, 0, 0.9);
+}
+
+/* ── Avatars ────────────────────────────────────────────────
+   People on the map are characters, not pins: the person who needs
+   help waves and pulses; riders bob as they travel and face the way
+   they are going; a delivered request celebrates. */
+
+.hl-avatar {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 999px;
+  border: 2.5px solid rgba(255, 255, 255, 0.92);
+  font-size: 24px;
+  line-height: 1;
+  box-shadow:
+    0 12px 26px -8px rgba(0, 0, 0, 0.85),
+    0 0 0 1px rgba(0, 0, 0, 0.3);
+  transition: transform 180ms ease;
+}
+.hl-marker:hover .hl-avatar {
+  transform: scale(1.1);
+}
+
+/* The person asking: a wave that keeps waving until someone comes. */
+.hl-avatar--need {
+  background: radial-gradient(circle at 35% 30%, #ff8fa3, #ff4d6d 55%, #c81e45);
+  animation: hl-wave 1.6s ease-in-out infinite;
+}
+.hl-avatar--need::after {
+  content: "";
+  position: absolute;
+  inset: -8px;
+  border-radius: 999px;
+  border: 3px solid #ff4d6d;
+  animation: hl-ring 1.8s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+@keyframes hl-wave {
+  0%,
+  100% {
+    transform: rotate(-8deg) translateY(0);
+  }
+  50% {
+    transform: rotate(8deg) translateY(-3px);
+  }
+}
+@keyframes hl-ring {
+  0% {
+    transform: scale(0.75);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(2.1);
+    opacity: 0;
+  }
+}
+
+/* Being helped: calmer, waiting. */
+.hl-avatar--assigned {
+  background: radial-gradient(circle at 35% 30%, #fde68a, #facc15 55%, #b45309);
+  animation: hl-bob 2.2s ease-in-out infinite;
+}
+
+/* Riders: bob with the road, rotate to the heading via --heading. */
+.hl-avatar--rider {
+  background: radial-gradient(circle at 35% 30%, #a5dcff, #46b5ff 55%, #1d6fd1);
+  animation: hl-bob 0.9s ease-in-out infinite;
+}
+.hl-avatar--rider.is-bot {
+  background: radial-gradient(circle at 35% 30%, #d9c6ff, #a78bfa 55%, #6d28d9);
+}
+.hl-avatar--rider > .hl-face {
+  display: inline-block;
+  transform: rotate(var(--heading, 0deg));
+  transition: transform 600ms ease;
+}
+.hl-avatar--rider.is-active {
+  box-shadow:
+    0 0 24px 6px rgba(70, 181, 255, 0.55),
+    0 12px 26px -8px rgba(0, 0, 0, 0.85);
+}
+@keyframes hl-bob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+/* Done: a little jump. */
+.hl-avatar--done {
+  background: radial-gradient(circle at 35% 30%, #9cf6d1, #21e39a 55%, #059669);
+  animation: hl-jump 1.4s ease-in-out infinite;
+}
+@keyframes hl-jump {
+  0%,
+  60%,
+  100% {
+    transform: translateY(0) scale(1);
+  }
+  30% {
+    transform: translateY(-9px) scale(1.06);
+  }
+}
+
+/* Shadow blob under every avatar so it sits ON the ground, not in the sky. */
+.hl-shadow {
+  position: absolute;
+  bottom: -6px;
+  left: 50%;
+  width: 34px;
+  height: 10px;
+  transform: translateX(-50%);
+  border-radius: 999px;
+  background: radial-gradient(ellipse, rgba(0, 0, 0, 0.55), transparent 70%);
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hl-avatar,
+  .hl-avatar::after {
+    animation: none;
+  }
+}
+
+/* ── Animations ─────────────────────────────────────────── */
+
+@keyframes hl-rise {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.hl-rise {
+  animation: hl-rise 320ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes hl-sweep {
+  from {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: -200% 0;
+  }
+}
+
+.hl-shimmer {
+  background: linear-gradient(
+    90deg,
+    rgba(167, 139, 250, 0) 0%,
+    rgba(167, 139, 250, 0.35) 50%,
+    rgba(167, 139, 250, 0) 100%
+  );
+  background-size: 200% 100%;
+  animation: hl-sweep 1.4s linear infinite;
+}
+
+@keyframes hl-pop {
+  0% {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.03);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.hl-pop {
+  animation: hl-pop 380ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hl-pulse::before,
+  .hl-shimmer {
+    animation: none;
+  }
+}
+
+/* Marker chrome in light mode */
+:root[data-theme="light"] .hl-label {
+  background: rgba(255, 255, 255, 0.94);
+  border-color: rgba(15, 20, 36, 0.14);
+  color: #1d2540;
+}
+:root[data-theme="light"] .hl-badge {
+  background: #ffffff;
+  border-color: rgba(15, 20, 36, 0.18);
+  color: #0f1424;
+}
+:root[data-theme="light"] .hl-pin {
+  border-color: rgba(255, 255, 255, 0.95);
+  box-shadow:
+    0 10px 22px -8px rgba(15, 20, 36, 0.45),
+    0 0 0 1px rgba(15, 20, 36, 0.12);
+}
+:root[data-theme="light"] .maplibregl-ctrl-group {
+  background: rgba(255, 255, 255, 0.95) !important;
+  border-color: rgba(15, 20, 36, 0.12) !important;
+}
+:root[data-theme="light"] .maplibregl-ctrl-group button .maplibregl-ctrl-icon {
+  filter: none;
+}
+:root[data-theme="light"] .maplibregl-ctrl-attrib {
+  background: rgba(255, 255, 255, 0.8) !important;
+}
+
+/* MapLibre chrome tuned to the palette */
+.maplibregl-ctrl-attrib {
+  background: rgba(5, 7, 15, 0.7) !important;
+  font-size: 10px !important;
+}
+.maplibregl-ctrl-attrib a {
+  color: #6b7492 !important;
+}
+.maplibregl-ctrl-group {
+  background: rgba(15, 20, 36, 0.92) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+.maplibregl-ctrl-group button + button {
+  border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+.maplibregl-ctrl-group button .maplibregl-ctrl-icon {
+  filter: invert(1) brightness(0.85);
+}
