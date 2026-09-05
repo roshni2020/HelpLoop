@@ -86,7 +86,7 @@ export default function RequestHelpForm({
                 setCategory(c.value);
                 setNeed(c.placeholder);
               }}
-              className={`rounded-xl border px-2 py-2.5 text-[13px] font-semibold transition ${
+              className={`rounded-xl border px-2 py-2.5 text-[15px] font-semibold transition ${
                 category === c.value
                   ? "border-violet-400/60 bg-violet-500/20 text-violet-100"
                   : "border-white/10 bg-white/[0.03] text-mist-400 hover:border-white/25"
@@ -105,7 +105,7 @@ export default function RequestHelpForm({
                 type="button"
                 title={o.hint}
                 onClick={() => setWho(o.value)}
-                className={`rounded-lg border px-2 py-1.5 text-left text-[11.5px] font-semibold leading-tight transition ${
+                className={`rounded-lg border px-2 py-1.5 text-left text-[13px] font-semibold leading-tight transition ${
                   who === o.value
                     ? "border-violet-400/60 bg-violet-500/20 text-violet-100"
                     : "border-white/10 bg-white/[0.03] text-mist-400 hover:border-white/25"
@@ -166,7 +166,7 @@ export default function RequestHelpForm({
                 key={u.value}
                 type="button"
                 onClick={() => setUrgency(u.value)}
-                className={`rounded-xl border px-2 py-2 text-[12px] font-semibold transition ${
+                className={`rounded-xl border px-2 py-2 text-[13.5px] font-semibold transition ${
                   urgency === u.value
                     ? "border-violet-400/60 bg-violet-500/20 text-violet-100"
                     : "border-white/10 bg-white/[0.03] text-mist-400 hover:border-white/25"
@@ -190,7 +190,7 @@ export default function RequestHelpForm({
           {busy ? "Researching…" : "Find help"}
         </Button>
 
-        <p className="text-center text-[10px] leading-relaxed text-ink-500">
+        <p className="text-center text-[11.5px] leading-relaxed text-ink-500">
           No account, no ID, nothing stored about you beyond this request.
         </p>
       </form>

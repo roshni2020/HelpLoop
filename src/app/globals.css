@@ -68,6 +68,7 @@ body {
 
 body {
   margin: 0;
+  font-size: 15px;
   background: var(--color-ink-950);
   color: var(--color-mist-200);
   font-family: var(--font-sans);

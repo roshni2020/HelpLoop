@@ -17,7 +17,7 @@ const MapCanvas = dynamic(() => import("@/components/MapCanvas"), {
   ssr: false,
   loading: () => (
     <div className="grid h-full place-items-center bg-ink-950">
-      <span className="text-[12px] text-ink-500">Loading map…</span>
+      <span className="text-[13.5px] text-ink-500">Loading map…</span>
     </div>
   ),
 });
@@ -172,8 +172,8 @@ export default function RequesterPage() {
       />
 
       {/* Left rail: the request, then the ranked results */}
-      <div className="pointer-events-none absolute inset-y-0 left-0 flex w-full max-w-[400px] flex-col gap-3 overflow-y-auto p-3 md:max-w-[380px]">
-        <div className="pointer-events-auto flex min-h-0 flex-col gap-3">
+      <div className="absolute inset-y-0 left-0 flex w-full max-w-[460px] flex-col gap-3 overflow-y-auto p-3 md:max-w-[440px]">
+        <div className="flex shrink-0 flex-col gap-3">
           {myRequest ? (
             <LiveRequestCard request={myRequest} tracking={tracking} onNewRequest={handleNewRequest} />
           ) : research.phase === "idle" ? (
@@ -227,8 +227,8 @@ export default function RequesterPage() {
 
       {/* Right rail: the research trail */}
       {(running || research.findings.length > 0) && !myRequest && (
-        <div className="pointer-events-none absolute inset-y-0 right-0 hidden w-full max-w-[380px] flex-col p-3 lg:flex">
-          <div className="pointer-events-auto flex min-h-0 flex-1">
+        <div className="absolute inset-y-0 right-0 hidden w-full max-w-[440px] flex-col p-3 lg:flex">
+          <div className="flex min-h-0 flex-1">
             <ResearchFeed log={research.log} findings={research.findings} running={running} />
           </div>
         </div>
@@ -237,7 +237,7 @@ export default function RequesterPage() {
       {/* Idle-state legend so an empty map still explains itself */}
       {research.phase === "idle" && !myRequest && (
         <div className="pointer-events-none absolute bottom-5 left-1/2 hidden -translate-x-1/2 lg:block">
-          <div className="rounded-full border border-white/10 bg-ink-900/85 px-4 py-2 text-[11px] text-mist-400 backdrop-blur-xl">
+          <div className="rounded-full border border-white/10 bg-ink-900/85 px-4 py-2 text-[12.5px] text-mist-400 backdrop-blur-xl">
             🔴 needs help · 🍲 food resource · 🙋 volunteer · 🤖 simulated · ✅ delivered
           </div>
         </div>

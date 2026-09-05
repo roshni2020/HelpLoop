@@ -94,14 +94,14 @@ export default function LiveRequestCard({
           }`}
         >
           <div className="hl-pop text-3xl">{STATUS_EMOJI[request.status]}</div>
-          <h3 className="mt-1.5 text-[17px] font-bold text-white">
+          <h3 className="mt-1.5 text-[19px] font-bold text-white">
             {request.status === "assigned" && request.volunteerName
               ? `${request.volunteerName} is helping you`
               : head.title}
           </h3>
-          <p className="mt-1 text-[12px] leading-5 text-mist-400">{head.body}</p>
+          <p className="mt-1 text-[13.5px] leading-5 text-mist-400">{head.body}</p>
           {done && (
-            <p className="mt-2 text-[13px] font-bold text-emerald-300">
+            <p className="mt-2 text-[15px] font-bold text-emerald-300">
               🎉 One less problem on the map.
             </p>
           )}
@@ -110,19 +110,19 @@ export default function LiveRequestCard({
         {tracking && !done && (
           <div className="mt-3 rounded-xl border border-sky-400/30 bg-sky-400/[0.07] p-3">
             <div className="flex items-center justify-between gap-2">
-              <p className="text-[12.5px] font-semibold text-white">
+              <p className="text-[14px] font-semibold text-white">
                 {tracking.isBot ? "🤖" : "🛵"} {tracking.volunteerName}
                 {tracking.stale ? " · last seen a while ago" : " · live"}
               </p>
-              <span className="rounded-lg bg-white/5 px-2 py-0.5 font-mono text-[11px] text-sky-300">
+              <span className="rounded-lg bg-white/5 px-2 py-0.5 font-mono text-[12.5px] text-sky-300">
                 ~{tracking.etaMinutes} min
               </span>
             </div>
-            <p className="mt-0.5 text-[11.5px] text-mist-400">
+            <p className="mt-0.5 text-[13px] text-mist-400">
               {(tracking.metersToNextStop / 1609).toFixed(1)} mi from{" "}
               {tracking.nextStop === "pantry" ? "the pantry" : "you"}
             </p>
-            <p className="mt-1.5 text-[10px] leading-4 text-ink-500">
+            <p className="mt-1.5 text-[11.5px] leading-4 text-ink-500">
               🔒 Location shown to the nearest ~¼ mile. A volunteer&apos;s exact position is
               never shared.
             </p>
@@ -138,7 +138,7 @@ export default function LiveRequestCard({
               <li key={status} className="flex gap-3">
                 <div className="flex flex-col items-center">
                   <span
-                    className={`grid h-6 w-6 place-items-center rounded-full border text-[11px] transition ${
+                    className={`grid h-6 w-6 place-items-center rounded-full border text-[12.5px] transition ${
                       reached
                         ? "border-emerald-400/60 bg-emerald-400/20 text-emerald-300"
                         : "border-white/12 bg-white/[0.03] text-ink-500"
@@ -154,12 +154,12 @@ export default function LiveRequestCard({
                 </div>
                 <div className="pb-1.5">
                   <p
-                    className={`text-[12px] font-semibold ${reached ? "text-white" : "text-ink-500"}`}
+                    className={`text-[13.5px] font-semibold ${reached ? "text-white" : "text-ink-500"}`}
                   >
                     {LABELS[status]}
                   </p>
                   {entry && (
-                    <p className="text-[10px] text-mist-400">
+                    <p className="text-[11.5px] text-mist-400">
                       {new Date(entry.at).toLocaleTimeString([], {
                         hour: "numeric",
                         minute: "2-digit",
@@ -174,16 +174,16 @@ export default function LiveRequestCard({
         </ol>
 
         <div className="mt-3 rounded-xl border border-white/8 bg-white/[0.025] p-3">
-          <p className="text-[10px] font-semibold uppercase tracking-[0.09em] text-mist-400">
+          <p className="text-[11.5px] font-semibold uppercase tracking-[0.09em] text-mist-400">
             {request.category === "shelter" ? "Heading to" : "Picking up from"}
           </p>
-          <p className="mt-1 text-[13px] font-semibold text-white">{request.resource.name}</p>
-          <p className="text-[11px] text-mist-400">{request.resource.address}</p>
+          <p className="mt-1 text-[15px] font-semibold text-white">{request.resource.name}</p>
+          <p className="text-[12.5px] text-mist-400">{request.resource.address}</p>
           {request.resource.hours && (
-            <p className="mt-0.5 text-[11px] text-mist-400">🕐 {request.resource.hours}</p>
+            <p className="mt-0.5 text-[12.5px] text-mist-400">🕐 {request.resource.hours}</p>
           )}
           {request.matchScore !== undefined && (
-            <p className="mt-1.5 text-[11px] text-amber-300">
+            <p className="mt-1.5 text-[12.5px] text-amber-300">
               ⭐ {request.matchScore}% match · {request.matchReason}
             </p>
           )}

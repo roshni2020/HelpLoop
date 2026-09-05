@@ -32,11 +32,11 @@ export function PanelHeader({
   return (
     <div className="flex items-start justify-between gap-3 border-b border-white/10 px-4 py-3">
       <div className="min-w-0">
-        <h2 className="truncate text-[13px] font-semibold tracking-wide text-white">
+        <h2 className="truncate text-[15px] font-semibold tracking-wide text-white">
           {title}
         </h2>
         {subtitle && (
-          <p className="mt-0.5 text-[11px] leading-snug text-mist-400">{subtitle}</p>
+          <p className="mt-0.5 text-[12.5px] leading-snug text-mist-400">{subtitle}</p>
         )}
       </div>
       {right}
@@ -62,8 +62,8 @@ export function Button({
   className?: string;
 }) {
   const sizes = {
-    sm: "px-3 py-1.5 text-[11px]",
-    md: "px-4 py-2 text-[13px]",
+    sm: "px-3 py-1.5 text-[12.5px]",
+    md: "px-4 py-2 text-[15px]",
     lg: "px-5 py-3 text-sm",
   };
   // Gradient buttons use literal white: `text-white` is re-pointed to ink
@@ -103,10 +103,10 @@ export function Field({
   return (
     <label className="block">
       <span className="mb-1.5 flex items-baseline justify-between">
-        <span className="text-[11px] font-semibold uppercase tracking-[0.09em] text-mist-400">
+        <span className="text-[12.5px] font-semibold uppercase tracking-[0.09em] text-mist-400">
           {label}
         </span>
-        {hint && <span className="text-[10px] text-ink-500">{hint}</span>}
+        {hint && <span className="text-[11.5px] text-ink-500">{hint}</span>}
       </span>
       {children}
     </label>
@@ -114,7 +114,7 @@ export function Field({
 }
 
 const CONTROL =
-  "w-full rounded-xl border border-white/12 bg-ink-800/80 px-3 py-2.5 text-[13px] text-white outline-none transition placeholder:text-ink-500 focus:border-violet-400/70 focus:ring-2 focus:ring-violet-500/25";
+  "w-full rounded-xl border border-white/12 bg-ink-800/80 px-3 py-2.5 text-[15px] text-white outline-none transition placeholder:text-ink-500 focus:border-violet-400/70 focus:ring-2 focus:ring-violet-500/25";
 
 export function TextInput(props: React.InputHTMLAttributes<HTMLInputElement>) {
   return <input {...props} className={`${CONTROL} ${props.className ?? ""}`} />;
@@ -148,7 +148,7 @@ export function Chip({
   return (
     <span
       title={title}
-      className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-semibold ${tones[tone]}`}
+      className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11.5px] font-semibold ${tones[tone]}`}
     >
       {children}
     </span>
@@ -165,7 +165,7 @@ export function ConfidenceBar({ value }: { value: number }) {
       <div className="h-1 w-14 overflow-hidden rounded-full bg-white/10">
         <div className={`h-full rounded-full ${tone} transition-all duration-500`} style={{ width: `${pct}%` }} />
       </div>
-      <span className="font-mono text-[10px] text-mist-400">{pct}%</span>
+      <span className="font-mono text-[11.5px] text-mist-400">{pct}%</span>
     </div>
   );
 }
@@ -174,8 +174,8 @@ export function Empty({ icon, title, body }: { icon: string; title: string; body
   return (
     <div className="flex flex-col items-center justify-center gap-2 px-6 py-12 text-center">
       <div className="text-3xl opacity-70">{icon}</div>
-      <p className="text-[13px] font-semibold text-mist-200">{title}</p>
-      {body && <p className="max-w-[34ch] text-[11px] leading-relaxed text-mist-400">{body}</p>}
+      <p className="text-[15px] font-semibold text-mist-200">{title}</p>
+      {body && <p className="max-w-[34ch] text-[12.5px] leading-relaxed text-mist-400">{body}</p>}
     </div>
   );
 }

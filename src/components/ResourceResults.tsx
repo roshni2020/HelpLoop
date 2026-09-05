@@ -112,7 +112,7 @@ function BestMatchCard({
       }`}
     >
       <div className="mb-2 flex items-center justify-between gap-2">
-        <span className="inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r from-amber-400 to-orange-400 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.08em] text-ink-950">
+        <span className="inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r from-amber-400 to-orange-400 px-2.5 py-1 text-[11.5px] font-bold uppercase tracking-[0.08em] text-ink-950">
           ⭐ Best match
         </span>
         <span className="font-mono text-2xl font-bold text-amber-300">
@@ -121,8 +121,8 @@ function BestMatchCard({
         </span>
       </div>
 
-      <h3 className="text-[15px] font-bold leading-tight text-white">{resource.name}</h3>
-      <p className="mt-1 text-[12px] leading-5 text-amber-100/85">{rank.reason}</p>
+      <h3 className="text-[17px] font-bold leading-tight text-white">{resource.name}</h3>
+      <p className="mt-1 text-[13.5px] leading-5 text-amber-100/85">{rank.reason}</p>
 
       <ResourceFacts resource={resource} />
 
@@ -180,10 +180,10 @@ function ResourceRow({
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <div className="flex items-baseline gap-1.5">
-            <span className="font-mono text-[10px] text-ink-500">#{position}</span>
-            <h3 className="truncate text-[13px] font-semibold text-white">{resource.name}</h3>
+            <span className="font-mono text-[11.5px] text-ink-500">#{position}</span>
+            <h3 className="truncate text-[15px] font-semibold text-white">{resource.name}</h3>
           </div>
-          <p className="mt-0.5 text-[11.5px] leading-4.5 text-mist-400">{rank.reason}</p>
+          <p className="mt-0.5 text-[13px] leading-4.5 text-mist-400">{rank.reason}</p>
         </div>
         <span className={`shrink-0 font-mono text-lg font-bold ${tone}`}>{rank.score}</span>
       </div>
@@ -236,7 +236,7 @@ function ResourceFacts({
       {openConflicts.map((c, i) => (
         <p
           key={i}
-          className="mt-2 rounded-lg border border-amber-400/25 bg-amber-400/10 px-2 py-1.5 text-[10.5px] leading-4 text-amber-200"
+          className="mt-2 rounded-lg border border-amber-400/25 bg-amber-400/10 px-2 py-1.5 text-[12px] leading-4 text-amber-200"
         >
           ⚠️ Sources disagree on {c.field}: “{c.claimA}” vs “{c.claimB}”. Call ahead.
         </p>
@@ -244,14 +244,14 @@ function ResourceFacts({
       {settled.map((c, i) => (
         <p
           key={`s${i}`}
-          className="mt-2 rounded-lg border border-emerald-400/20 bg-emerald-400/[0.07] px-2 py-1.5 text-[10.5px] leading-4 text-emerald-200"
+          className="mt-2 rounded-lg border border-emerald-400/20 bg-emerald-400/[0.07] px-2 py-1.5 text-[12px] leading-4 text-emerald-200"
         >
           ✔️ Conflict on {c.field} settled by a follow-up search: {c.resolution}
         </p>
       ))}
 
       <div className="mt-2 flex items-center justify-between gap-2">
-        <span className="truncate text-[10px] text-ink-500">
+        <span className="truncate text-[11.5px] text-ink-500">
           {resource.address || "address unconfirmed"}
         </span>
         <ConfidenceBar value={resource.confidence} />

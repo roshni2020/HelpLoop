@@ -66,12 +66,12 @@ export default function TopNav() {
   return (
     <header className="z-30 flex shrink-0 items-center gap-4 border-b border-white/10 bg-ink-950/90 px-4 py-2.5 backdrop-blur-xl">
       <Link href="/" className="flex items-center gap-2.5">
-        <span className="grid h-8 w-8 place-items-center rounded-xl bg-gradient-to-br from-violet-500 to-sky-500 text-[15px] shadow-[0_8px_24px_-8px_rgba(139,92,246,0.9)]">
+        <span className="grid h-8 w-8 place-items-center rounded-xl bg-gradient-to-br from-violet-500 to-sky-500 text-[17px] shadow-[0_8px_24px_-8px_rgba(139,92,246,0.9)]">
           🔁
         </span>
         <span className="leading-none">
-          <span className="block text-[15px] font-bold tracking-tight text-white">HelpLoop</span>
-          <span className="hidden text-[10px] text-mist-400 sm:block">
+          <span className="block text-[17px] font-bold tracking-tight text-white">HelpLoop</span>
+          <span className="hidden text-[11.5px] text-mist-400 sm:block">
             Find help. Match help. Move help.
           </span>
         </span>
@@ -84,13 +84,13 @@ export default function TopNav() {
             <Link
               key={link.href}
               href={link.href}
-              className={`relative rounded-lg px-2.5 py-1.5 text-[12px] font-semibold transition ${
+              className={`relative rounded-lg px-2.5 py-1.5 text-[13.5px] font-semibold transition ${
                 active ? "bg-white/10 text-white" : "text-mist-400 hover:bg-white/5 hover:text-white"
               }`}
             >
               {link.label}
               {link.href === "/volunteer" && openCount > 0 && (
-                <span className="ml-1.5 rounded-full bg-rose-500 px-1.5 py-px font-mono text-[9px] text-[#fff]">
+                <span className="ml-1.5 rounded-full bg-rose-500 px-1.5 py-px font-mono text-[10px] text-[#fff]">
                   {openCount}
                 </span>
               )}
@@ -110,7 +110,7 @@ export default function TopNav() {
                 ? `${botCount} simulated volunteers on the map — click to remove`
                 : "Add simulated volunteers that accept requests and ride the route"
             }
-            className={`inline-flex items-center gap-1.5 rounded-lg border px-2.5 py-1 text-[10px] font-semibold transition disabled:opacity-50 ${
+            className={`inline-flex items-center gap-1.5 rounded-lg border px-2.5 py-1 text-[11.5px] font-semibold transition disabled:opacity-50 ${
               botCount > 0
                 ? "border-sky-400/40 bg-sky-400/10 text-sky-300 hover:border-rose-400/40 hover:text-rose-300"
                 : "border-white/10 bg-white/5 text-mist-400 hover:border-sky-400/40 hover:text-sky-300"
@@ -124,7 +124,7 @@ export default function TopNav() {
             onClick={handleReset}
             disabled={busy !== null}
             title="Clear the board between demo run-throughs"
-            className="rounded-lg border border-white/10 bg-white/5 px-2.5 py-1 text-[10px] font-semibold text-mist-400 transition hover:border-rose-400/40 hover:text-rose-300 disabled:opacity-50"
+            className="rounded-lg border border-white/10 bg-white/5 px-2.5 py-1 text-[11.5px] font-semibold text-mist-400 transition hover:border-rose-400/40 hover:text-rose-300 disabled:opacity-50"
           >
             Reset board
           </button>
@@ -134,7 +134,7 @@ export default function TopNav() {
           onClick={toggle}
           title={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
           aria-label="Toggle theme"
-          className="grid h-7 w-7 place-items-center rounded-lg border border-white/10 bg-white/5 text-[13px] transition hover:border-white/25"
+          className="grid h-7 w-7 place-items-center rounded-lg border border-white/10 bg-white/5 text-[15px] transition hover:border-white/25"
         >
           {theme === "dark" ? "☀️" : "🌙"}
         </button>
@@ -154,7 +154,7 @@ function Track({ label, live, fallback }: { label: string; live?: boolean; fallb
   return (
     <span
       title={live ? `${label}: live` : `${label}: not configured — using ${fallback}`}
-      className={`hidden items-center gap-1.5 rounded-full border px-2 py-1 text-[10px] font-semibold md:inline-flex ${
+      className={`hidden items-center gap-1.5 rounded-full border px-2 py-1 text-[11.5px] font-semibold md:inline-flex ${
         live
           ? "border-emerald-400/30 bg-emerald-400/10 text-emerald-300"
           : "border-white/10 bg-white/5 text-ink-500"

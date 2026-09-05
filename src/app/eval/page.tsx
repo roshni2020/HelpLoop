@@ -86,15 +86,15 @@ export default async function EvalPage() {
 
   return (
     <div className="h-full overflow-y-auto">
-      <div className="mx-auto max-w-4xl px-5 py-8">
+      <div className="mx-auto max-w-5xl px-5 py-8">
         <header className="mb-7">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-violet-400">
+          <p className="text-[12.5px] font-semibold uppercase tracking-[0.14em] text-violet-400">
             Track 2 · Nebius Token Factory
           </p>
-          <h1 className="mt-1.5 text-2xl font-bold tracking-tight text-white">
+          <h1 className="mt-1.5 text-3xl font-bold tracking-tight text-white">
             Resource matching evaluation
           </h1>
-          <p className="mt-2 max-w-2xl text-[13px] leading-6 text-mist-400">
+          <p className="mt-2 max-w-2xl text-[15px] leading-6 text-mist-400">
             Twenty hand-labelled scenarios, each isolating one decision the matcher
             has to get right — a dietary requirement against a shorter walk, a closed
             door against an open one, an appointment barrier against a walk-in. The
@@ -105,17 +105,17 @@ export default async function EvalPage() {
         {!report ? (
           <div className="rounded-2xl border border-white/10 bg-ink-900/70 p-8 text-center">
             <div className="text-3xl">📊</div>
-            <h2 className="mt-2 text-[15px] font-semibold text-white">
+            <h2 className="mt-2 text-[17px] font-semibold text-white">
               No evaluation run yet
             </h2>
-            <p className="mx-auto mt-2 max-w-md text-[12.5px] leading-6 text-mist-400">
+            <p className="mx-auto mt-2 max-w-md text-[14px] leading-6 text-mist-400">
               Results are measured, never assumed — so this page stays empty until you
               run the harness yourself.
             </p>
-            <pre className="mx-auto mt-4 w-fit rounded-xl border border-white/10 bg-black/40 px-4 py-3 text-left font-mono text-[12px] text-emerald-300">
+            <pre className="mx-auto mt-4 w-fit rounded-xl border border-white/10 bg-black/40 px-4 py-3 text-left font-mono text-[13.5px] text-emerald-300">
               npm run eval -- --baseline
             </pre>
-            <p className="mt-3 text-[11px] text-ink-500">
+            <p className="mt-3 text-[12.5px] text-ink-500">
               Set NEBIUS_API_KEY first to score the model; without it the run measures
               the built-in heuristic instead.
             </p>
@@ -124,7 +124,7 @@ export default async function EvalPage() {
           <>
             <div className="mb-5 flex flex-wrap items-center gap-2 rounded-xl border border-white/10 bg-white/[0.025] px-3.5 py-2.5">
               <span
-                className={`inline-flex items-center gap-1.5 rounded-full border px-2 py-0.5 text-[10px] font-semibold ${
+                className={`inline-flex items-center gap-1.5 rounded-full border px-2 py-0.5 text-[11.5px] font-semibold ${
                   report.live
                     ? "border-emerald-400/30 bg-emerald-400/10 text-emerald-300"
                     : "border-amber-400/30 bg-amber-400/10 text-amber-300"
@@ -132,8 +132,8 @@ export default async function EvalPage() {
               >
                 {report.live ? "Nebius Token Factory" : "heuristic fallback"}
               </span>
-              <code className="font-mono text-[11px] text-mist-200">{report.model}</code>
-              <span className="ml-auto text-[10.5px] text-ink-500">
+              <code className="font-mono text-[12.5px] text-mist-200">{report.model}</code>
+              <span className="ml-auto text-[12px] text-ink-500">
                 run {new Date(report.generatedAt).toLocaleString()} · scenarios scored as
                 of {new Date(report.evaluatedAt).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}
               </span>
@@ -172,7 +172,7 @@ export default async function EvalPage() {
             </div>
 
             {report.baseline && (
-              <p className="mt-3 rounded-xl border border-white/10 bg-white/[0.025] px-3.5 py-2.5 text-[12px] text-mist-400">
+              <p className="mt-3 rounded-xl border border-white/10 bg-white/[0.025] px-3.5 py-2.5 text-[13.5px] text-mist-400">
                 Built-in heuristic baseline on the same set:{" "}
                 <span className="font-semibold text-mist-200">
                   {report.baseline.top1Correct}/{report.baseline.scenarios} (
@@ -192,7 +192,7 @@ export default async function EvalPage() {
 
             <Limitations n={report.summary.scenarios} accuracy={report.summary.top1Accuracy} />
 
-            <h2 className="mb-2.5 mt-7 text-[13px] font-semibold text-white">
+            <h2 className="mb-2.5 mt-7 text-[15px] font-semibold text-white">
               All {report.cases.length} scenarios
             </h2>
             <ol className="space-y-2">
@@ -207,7 +207,7 @@ export default async function EvalPage() {
                 >
                   <div className="flex items-start gap-3">
                     <span
-                      className={`mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full text-[11px] ${
+                      className={`mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full text-[12.5px] ${
                         c.correct
                           ? "bg-emerald-400/15 text-emerald-300"
                           : "bg-rose-400/15 text-rose-300"
@@ -216,19 +216,19 @@ export default async function EvalPage() {
                       {c.correct ? "✓" : "✗"}
                     </span>
                     <div className="min-w-0 flex-1">
-                      <p className="text-[13px] font-semibold text-white">
-                        <span className="mr-1.5 font-mono text-[10px] text-ink-500">
+                      <p className="text-[15px] font-semibold text-white">
+                        <span className="mr-1.5 font-mono text-[11.5px] text-ink-500">
                           {String(i + 1).padStart(2, "0")}
                         </span>
                         {c.title}
                       </p>
-                      <p className="mt-0.5 text-[11.5px] italic text-mist-400">{c.probe}</p>
+                      <p className="mt-0.5 text-[13px] italic text-mist-400">{c.probe}</p>
 
                       <div className="mt-2 flex flex-wrap gap-1.5">
                         {c.ranking.map((r, ri) => (
                           <span
                             key={r.id}
-                            className={`rounded-lg border px-2 py-0.5 font-mono text-[10px] ${
+                            className={`rounded-lg border px-2 py-0.5 font-mono text-[11.5px] ${
                               ri === 0
                                 ? c.correct
                                   ? "border-emerald-400/30 bg-emerald-400/10 text-emerald-300"
@@ -241,17 +241,17 @@ export default async function EvalPage() {
                         ))}
                       </div>
 
-                      <p className="mt-2 text-[11.5px] leading-5 text-mist-400">
+                      <p className="mt-2 text-[13px] leading-5 text-mist-400">
                         <span className="text-mist-200">Model:</span> {c.modelReason}
                       </p>
                       {!c.correct && (
-                        <p className="mt-1 text-[11.5px] leading-5 text-rose-200">
+                        <p className="mt-1 text-[13px] leading-5 text-rose-200">
                           <span className="font-semibold">Expected {c.expectedName}:</span>{" "}
                           {c.label}
                         </p>
                       )}
                     </div>
-                    <span className="shrink-0 font-mono text-[10px] text-ink-500">
+                    <span className="shrink-0 font-mono text-[11.5px] text-ink-500">
                       {c.latencyMs}ms
                     </span>
                   </div>
@@ -284,11 +284,11 @@ function Stat({
           : "border-white/10 bg-white/[0.025]"
       }`}
     >
-      <p className="text-[10px] font-semibold uppercase tracking-[0.1em] text-mist-400">
+      <p className="text-[11.5px] font-semibold uppercase tracking-[0.1em] text-mist-400">
         {label}
       </p>
       <p className="mt-1.5 font-mono text-2xl font-bold text-white">{value}</p>
-      <p className="mt-0.5 text-[10.5px] text-ink-500">{sub}</p>
+      <p className="mt-0.5 text-[12px] text-ink-500">{sub}</p>
     </div>
   );
 }
@@ -297,7 +297,7 @@ function FailureSection({ cases }: { cases: CaseResult[] }) {
   const failures = cases.filter((c) => !c.correct);
   if (!failures.length) {
     return (
-      <p className="mt-3 rounded-xl border border-emerald-400/20 bg-emerald-400/[0.06] px-3.5 py-2.5 text-[12px] text-emerald-200">
+      <p className="mt-3 rounded-xl border border-emerald-400/20 bg-emerald-400/[0.06] px-3.5 py-2.5 text-[13.5px] text-emerald-200">
         No failures on this run. That is a small set, not a guarantee — the honest read
         is that these twenty cases are the ones we know it handles.
       </p>
@@ -306,10 +306,10 @@ function FailureSection({ cases }: { cases: CaseResult[] }) {
   const worst = failures[0];
   return (
     <div className="mt-5 rounded-2xl border border-rose-400/25 bg-rose-400/[0.05] p-4">
-      <h2 className="text-[13px] font-semibold text-white">
+      <h2 className="text-[15px] font-semibold text-white">
         Where it fails ({failures.length}/{cases.length})
       </h2>
-      <p className="mt-1 text-[12px] leading-5 text-mist-400">
+      <p className="mt-1 text-[13.5px] leading-5 text-mist-400">
         The most instructive miss: <span className="text-white">{worst.title}</span>.
         The label says <span className="text-emerald-300">{worst.expectedName}</span>{" "}
         because {lower(worst.label)} The model chose{" "}
@@ -337,13 +337,13 @@ function ModelComparison({ reports, chosen }: { reports: Report[]; chosen: strin
 
   return (
     <section className="mt-5 rounded-2xl border border-white/10 bg-white/[0.025] p-4">
-      <h2 className="text-[13px] font-semibold text-white">
+      <h2 className="text-[15px] font-semibold text-white">
         Why this model — same set, {reports.length} models
       </h2>
       <div className="mt-2.5 overflow-x-auto">
-        <table className="w-full min-w-[520px] border-collapse text-[11.5px]">
+        <table className="w-full min-w-[520px] border-collapse text-[13px]">
           <thead>
-            <tr className="border-b border-white/10 text-left text-[10px] uppercase tracking-[0.08em] text-mist-400">
+            <tr className="border-b border-white/10 text-left text-[11.5px] uppercase tracking-[0.08em] text-mist-400">
               <th className="pb-1.5 pr-3 font-semibold">Model</th>
               <th className="pb-1.5 pr-3 text-right font-semibold">Top-1</th>
               <th className="pb-1.5 pr-3 text-right font-semibold">p50</th>
@@ -385,7 +385,7 @@ function ModelComparison({ reports, chosen }: { reports: Report[]; chosen: strin
           </tbody>
         </table>
       </div>
-      <p className="mt-2.5 text-[11.5px] leading-5 text-mist-400">
+      <p className="mt-2.5 text-[13px] leading-5 text-mist-400">
         Accuracy is a tie — at this sample size the intervals overlap almost
         entirely, so none of these is measurably more accurate than another.
         Tail latency is not a tie: p95 spans{" "}
@@ -410,10 +410,10 @@ function Limitations({ n, accuracy }: { n: number; accuracy: number }) {
   const [lo, hi] = wilson(accuracy, n);
   return (
     <section className="mt-5 rounded-2xl border border-amber-400/25 bg-amber-400/[0.05] p-4">
-      <h2 className="text-[13px] font-semibold text-white">
+      <h2 className="text-[15px] font-semibold text-white">
         What this measurement does not tell you
       </h2>
-      <ul className="mt-2 space-y-2 text-[12px] leading-5 text-mist-400">
+      <ul className="mt-2 space-y-2 text-[13.5px] leading-5 text-mist-400">
         <li>
           <span className="font-semibold text-amber-200">
             {n} scenarios is too few to rank two models.

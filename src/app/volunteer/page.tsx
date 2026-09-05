@@ -18,7 +18,7 @@ const MapCanvas = dynamic(() => import("@/components/MapCanvas"), {
   ssr: false,
   loading: () => (
     <div className="grid h-full place-items-center bg-ink-950">
-      <span className="text-[12px] text-ink-500">Loading map…</span>
+      <span className="text-[13.5px] text-ink-500">Loading map…</span>
     </div>
   ),
 });
@@ -247,7 +247,7 @@ export default function VolunteerPage() {
             <Button type="submit" size="lg" className="w-full" disabled={!name.trim()}>
               I&apos;m ready to help
             </Button>
-            <p className="text-center text-[10px] leading-4 text-ink-500">
+            <p className="text-center text-[11.5px] leading-4 text-ink-500">
               🔒 Requesters see your position rounded to about a quarter mile — never your
               exact location.
             </p>
@@ -269,8 +269,8 @@ export default function VolunteerPage() {
         mission={mission}
       />
 
-      <div className="pointer-events-none absolute inset-y-0 left-0 flex w-full max-w-[400px] flex-col gap-3 overflow-y-auto p-3 md:max-w-[380px]">
-        <div className="pointer-events-auto flex flex-col gap-3">
+      <div className="absolute inset-y-0 left-0 flex w-full max-w-[460px] flex-col gap-3 overflow-y-auto p-3 md:max-w-[440px]">
+        <div className="flex shrink-0 flex-col gap-3">
           <Panel className="hl-rise overflow-hidden">
             <PanelHeader
               title={`Hi ${name} 👋`}
@@ -281,13 +281,13 @@ export default function VolunteerPage() {
                 </Chip>
               }
             />
-            <div className="flex items-center justify-between gap-2 px-4 py-2.5 text-[11px]">
+            <div className="flex items-center justify-between gap-2 px-4 py-2.5 text-[12.5px]">
               <span className="text-mist-400">
                 {locationSource === "gps" && "📍 Sharing GPS position"}
                 {locationSource === "simulated" && "📍 Sharing a simulated position (no GPS here)"}
                 {locationSource === "off" && "📍 Location off"}
               </span>
-              <span className="text-[10px] text-ink-500">rounded to ~¼ mi for others</span>
+              <span className="text-[11.5px] text-ink-500">rounded to ~¼ mi for others</span>
             </div>
           </Panel>
 
@@ -344,10 +344,10 @@ export default function VolunteerPage() {
                 {myDone.slice(0, 5).map((job) => (
                   <li key={job._id} className="flex items-center gap-2 px-4 py-2.5">
                     <span>✅</span>
-                    <span className="min-w-0 flex-1 truncate text-[12px] text-mist-200">
+                    <span className="min-w-0 flex-1 truncate text-[13.5px] text-mist-200">
                       {job.resource.name}
                     </span>
-                    <span className="text-[10px] text-ink-500">{timeAgo(job.updatedAt)}</span>
+                    <span className="text-[11.5px] text-ink-500">{timeAgo(job.updatedAt)}</span>
                   </li>
                 ))}
               </ul>
@@ -358,7 +358,7 @@ export default function VolunteerPage() {
 
       {toast && (
         <div className="hl-pop pointer-events-none absolute bottom-6 left-1/2 z-40 -translate-x-1/2">
-          <div className="rounded-full border border-white/15 bg-ink-900/95 px-5 py-2.5 text-[13px] font-semibold text-white shadow-[0_20px_50px_-12px_rgba(0,0,0,0.9)] backdrop-blur-xl">
+          <div className="rounded-full border border-white/15 bg-ink-900/95 px-5 py-2.5 text-[15px] font-semibold text-white shadow-[0_20px_50px_-12px_rgba(0,0,0,0.9)] backdrop-blur-xl">
             {toast}
           </div>
         </div>
@@ -397,17 +397,17 @@ function OpenRequestCard({
     >
       <div className="flex items-start justify-between gap-2">
         <div className="min-w-0">
-          <p className="text-[13px] font-bold text-white">
+          <p className="text-[15px] font-bold text-white">
             {request.category === "shelter" ? "🛏️" : request.category === "clothing" ? "🧥" : "🍲"} {request.need}
           </p>
-          <p className="mt-0.5 text-[11px] text-mist-400">
+          <p className="mt-0.5 text-[12.5px] text-mist-400">
             {request.category === "shelter" ? "Get them to" : "Pick up from"}{" "}
             <span className="text-mist-200">{request.resource.name}</span>
           </p>
-          <p className="text-[10.5px] text-ink-500">{request.resource.address}</p>
+          <p className="text-[12px] text-ink-500">{request.resource.address}</p>
         </div>
         {away !== null && (
-          <span className="shrink-0 rounded-lg bg-white/5 px-2 py-1 font-mono text-[11px] text-mist-200">
+          <span className="shrink-0 rounded-lg bg-white/5 px-2 py-1 font-mono text-[12.5px] text-mist-200">
             {away} mi
           </span>
         )}
@@ -422,7 +422,7 @@ function OpenRequestCard({
       </div>
 
       {request.matchScore !== undefined && (
-        <p className="mt-2 text-[10.5px] leading-4 text-amber-300/90">
+        <p className="mt-2 text-[12px] leading-4 text-amber-300/90">
           ⭐ {request.matchScore}% match · {request.matchReason}
         </p>
       )}
@@ -456,12 +456,12 @@ function MissionCard({
       <div className="flex items-center gap-2">
         <span className="text-lg">{STATUS_EMOJI[job.status]}</span>
         <div className="min-w-0 flex-1">
-          <p className="truncate text-[13px] font-semibold text-white">{job.resource.name}</p>
-          <p className="text-[11px] text-mist-400">{STATUS_LABEL[job.status]}</p>
+          <p className="truncate text-[15px] font-semibold text-white">{job.resource.name}</p>
+          <p className="text-[12.5px] text-mist-400">{STATUS_LABEL[job.status]}</p>
         </div>
       </div>
 
-      <div className="mt-2 space-y-1 rounded-lg border border-white/8 bg-black/20 p-2 font-mono text-[10.5px] leading-5 text-mist-400">
+      <div className="mt-2 space-y-1 rounded-lg border border-white/8 bg-black/20 p-2 font-mono text-[12px] leading-5 text-mist-400">
         <p>🙋 you</p>
         <p className="pl-1 text-ink-500">↓</p>
         <p>🍲 {job.resource.name}</p>

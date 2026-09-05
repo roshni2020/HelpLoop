@@ -58,7 +58,7 @@ export default function ResearchFeed({
               <button
                 key={t}
                 onClick={() => setTab(t)}
-                className={`rounded-md px-2 py-1 text-[10px] font-semibold capitalize transition ${
+                className={`rounded-md px-2 py-1 text-[11.5px] font-semibold capitalize transition ${
                   tab === t ? "bg-white/10 text-white" : "text-mist-400 hover:text-white"
                 }`}
               >
@@ -80,15 +80,15 @@ export default function ResearchFeed({
           <ol className="space-y-2">
             {log.map((line) => (
               <li key={line.id} className="hl-rise flex gap-2.5">
-                <span className="mt-px w-4 shrink-0 text-center text-[12px] leading-5">
+                <span className="mt-px w-4 shrink-0 text-center text-[13.5px] leading-5">
                   {line.icon}
                 </span>
                 <div className="min-w-0">
-                  <p className={`text-[12px] leading-5 ${TONE_STYLES[line.tone]}`}>
+                  <p className={`text-[13.5px] leading-5 ${TONE_STYLES[line.tone]}`}>
                     {line.text}
                   </p>
                   {line.detail && (
-                    <p className="mt-0.5 border-l border-white/10 pl-2 font-mono text-[10px] leading-4 text-ink-500">
+                    <p className="mt-0.5 border-l border-white/10 pl-2 font-mono text-[11.5px] leading-4 text-ink-500">
                       {line.detail}
                     </p>
                   )}
@@ -96,7 +96,7 @@ export default function ResearchFeed({
               </li>
             ))}
             {!log.length && (
-              <li className="py-6 text-center text-[11px] text-ink-500">
+              <li className="py-6 text-center text-[12.5px] text-ink-500">
                 The research log appears here.
               </li>
             )}
@@ -125,10 +125,10 @@ export default function ResearchFeed({
                   </Chip>
                   {f.needsFollowUp && <Chip tone="warn">needs follow-up</Chip>}
                 </div>
-                <p className="font-mono text-[10px] leading-4 text-sky-300/80">
+                <p className="font-mono text-[11.5px] leading-4 text-sky-300/80">
                   ? {f.query}
                 </p>
-                <p className="mt-1 text-[11.5px] leading-5 text-mist-200">{f.finding}</p>
+                <p className="mt-1 text-[13px] leading-5 text-mist-200">{f.finding}</p>
                 {f.sources.length > 0 && (
                   <div className="mt-1.5 flex flex-wrap gap-1">
                     {f.sources.slice(0, 3).map((s, i) => (
@@ -137,7 +137,7 @@ export default function ResearchFeed({
                         href={s}
                         target="_blank"
                         rel="noreferrer noopener"
-                        className="max-w-[200px] truncate rounded border border-white/10 bg-white/5 px-1.5 py-0.5 font-mono text-[9px] text-mist-400 hover:border-white/25 hover:text-mist-200"
+                        className="max-w-[200px] truncate rounded border border-white/10 bg-white/5 px-1.5 py-0.5 font-mono text-[10px] text-mist-400 hover:border-white/25 hover:text-mist-200"
                       >
                         {hostOf(s)}
                       </a>
@@ -147,7 +147,7 @@ export default function ResearchFeed({
               </li>
             ))}
             {!findings.length && (
-              <li className="py-6 text-center text-[11px] text-ink-500">
+              <li className="py-6 text-center text-[12.5px] text-ink-500">
                 Stored findings appear here as they come in.
               </li>
             )}
