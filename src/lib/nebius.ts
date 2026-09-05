@@ -40,14 +40,14 @@ function client(): OpenAI {
   });
 }
 
-const SYSTEM_PROMPT = `You match people in need of food assistance to the community resource that will actually work for them tonight.
+const SYSTEM_PROMPT = `You match people in need — of food, clothing, or a place to sleep — to the community resource that will actually work for them tonight.
 
 You are given the person's situation and a list of candidate resources discovered by web research. Score every resource from 0 to 100 and return them ranked best first.
 
 How to score, in priority order:
 1. REACHABILITY. If the person has no car, anything beyond ~1.5 miles on foot is a serious problem and beyond ~3 miles is usually unreachable. If they have transit or a bike, extend that. A resource they cannot physically get to is never the best match, no matter how good it is otherwise.
 2. TIMING. If they need food tonight, a resource that closes before they could arrive scores very low. Already closed = near zero.
-3. DIETARY FIT. A hard requirement (vegetarian, vegan, halal, kosher, gluten-free) that a resource does not meet is disqualifying, not a minor deduction.
+3. FIT FOR THE CATEGORY. Food: a hard dietary requirement (vegetarian, vegan, halal, kosher, gluten-free) that a resource does not meet is disqualifying. Shelter: no confirmed bed availability tonight, or an intake window that has already closed, is close to disqualifying; match gender/family/age rules exactly. Clothing: prefer places that clearly provide the items asked for, free.
 4. WHO THEY ARE. A student can use a campus pantry; anyone else will be turned away. A parent with kids cannot use an adults-only line. A senior or veteran may have dedicated programs that beat general ones. Someone unhoused cannot meet a proof-of-address requirement. Treat a mismatch here as disqualifying.
 5. ACCESS BARRIERS. Appointment-only, referral-required, or ID-required programs are a poor fit for someone who needs food in the next few hours.
 6. CONFIDENCE. Prefer resources whose details were verified. Treat unverified or contradictory information as risk and say so in the concerns.
@@ -72,7 +72,8 @@ function forModel(r: Resource, need: HelpNeed) {
     eligibility: r.eligibility || "unknown",
     foodTypes: r.foodTypes.length ? r.foodTypes : ["unknown"],
     meetsDietaryNeed:
-      need.diet === "any" ? "n/a" : mentionsDiet(r, need.diet) ? "yes" : "not confirmed",
+      need.category !== "food" || need.diet === "any" ? "n/a" : mentionsDiet(r, need.diet) ? "yes" : "not confirmed",
+    availabilityTonight: r.availability || (need.category === "shelter" ? "unknown" : "n/a"),
     researchConfidence: Math.round(r.confidence * 100) + "%",
     unresolvedConflicts: r.conflicts
       .filter((c) => c.status === "open")
@@ -94,6 +95,7 @@ function userPrompt(need: HelpNeed, resources: Resource[], now: Date): string {
       assumedArrivalTime: fmt(arrival),
       note: "Judge every resource against assumedArrivalTime, not currentTime. Anything that closes before it is closed.",
       person: {
+        category: need.category,
         need: need.need,
         location: need.locationText,
         dietaryRequirement: need.diet,
@@ -366,9 +368,12 @@ export function heuristicScore(
     }
   }
 
-  // ── Dietary fit: a hard requirement is close to disqualifying.
+  // ── Fit: diet for food, confirmed beds for shelter.
   let dietScore: number;
-  if (need.diet === "any") {
+  if (need.category === "shelter") {
+    dietScore = r.availability ? 1 : 0.35;
+    if (!r.availability) concerns.push("bed availability unconfirmed");
+  } else if (need.category !== "food" || need.diet === "any") {
     dietScore = 0.85;
   } else if (mentionsDiet(r, need.diet)) {
     dietScore = 1;

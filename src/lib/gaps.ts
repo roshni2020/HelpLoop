@@ -59,6 +59,13 @@ export const GAP_TYPES: Gap[] = [
       `Who is eligible to receive food from ${r.name} ${cityOf(r)}? Is ID, proof of address or a referral required?`,
   },
   {
+    field: "availability",
+    label: "Checking whether beds are available tonight",
+    weight: 95,
+    query: (r) =>
+      `Does ${r.name} ${cityOf(r)} have shelter beds available tonight, and what is the check-in or intake process?`,
+  },
+  {
     field: "address",
     label: "Checking street address",
     weight: 90,
@@ -85,9 +92,10 @@ export function detectGaps(r: Resource, need: HelpNeed): Gap[] {
     gaps.push(GAP_TYPES[0]);
   }
   if (r.walkIn === undefined) gaps.push(GAP_TYPES[1]);
-  if (need.diet !== "any" && !mentionsDiet(r, need.diet)) gaps.push(GAP_TYPES[2]);
+  if (need.category === "food" && need.diet !== "any" && !mentionsDiet(r, need.diet)) gaps.push(GAP_TYPES[2]);
   if (missing(r.eligibility)) gaps.push(GAP_TYPES[3]);
-  if (missing(r.address)) gaps.push(GAP_TYPES[4]);
+  if (need.category === "shelter" && missing(r.availability)) gaps.push(GAP_TYPES[4]);
+  if (missing(r.address)) gaps.push(GAP_TYPES[5]);
 
   return gaps.sort((a, b) => b.weight - a.weight);
 }
@@ -262,7 +270,8 @@ export function scoreConfidence(r: Resource, need: HelpNeed): number {
   count(parseClosingMinutes(r.hours) !== undefined, 3);
   count(r.walkIn !== undefined, 2);
   count(Boolean(r.eligibility && r.eligibility.length > 5), 1);
-  count(need.diet === "any" || mentionsDiet(r, need.diet), 2);
+  count(need.category !== "food" || need.diet === "any" || mentionsDiet(r, need.diet), 2);
+  if (need.category === "shelter") count(Boolean(r.availability), 3);
   count(r.sources.length > 0, 1);
   count(r.sources.length > 1, 1);
 

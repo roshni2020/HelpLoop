@@ -22,11 +22,11 @@ const HEADLINE: Record<RequestStatus, { title: string; body: string }> = {
   },
   assigned: {
     title: "Volunteer assigned",
-    body: "They're heading to the pantry now.",
+    body: "They're on their way there now.",
   },
   picked_up: {
-    title: "Food picked up",
-    body: "Your food is in hand and on its way to you.",
+    title: "Picked up",
+    body: "It's in hand and on its way to you.",
   },
   on_the_way: {
     title: "On the way to you",
@@ -34,7 +34,7 @@ const HEADLINE: Record<RequestStatus, { title: string; body: string }> = {
   },
   delivered: {
     title: "Delivered",
-    body: "Your food arrived. Nothing else to do.",
+    body: "It arrived. Nothing else to do.",
   },
   cancelled: { title: "Cancelled", body: "This request was closed." },
 };
@@ -175,7 +175,7 @@ export default function LiveRequestCard({
 
         <div className="mt-3 rounded-xl border border-white/8 bg-white/[0.025] p-3">
           <p className="text-[10px] font-semibold uppercase tracking-[0.09em] text-mist-400">
-            Picking up from
+            {request.category === "shelter" ? "Heading to" : "Picking up from"}
           </p>
           <p className="mt-1 text-[13px] font-semibold text-white">{request.resource.name}</p>
           <p className="text-[11px] text-mist-400">{request.resource.address}</p>

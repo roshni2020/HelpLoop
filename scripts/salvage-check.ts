@@ -53,6 +53,7 @@ check(extractRankings("I could not decide, sorry.").length === 0, "prose reply y
 
 // Whatever the model returns, every candidate has to come back ranked.
 const need: HelpNeed = {
+  category: "food",
   need: "Dinner tonight",
   locationText: "Oakland, CA",
   lat: 0,

@@ -2,7 +2,16 @@
 
 import { useState } from "react";
 import { Button, Field, Panel, PanelHeader, Select, TextInput } from "./ui";
-import { WHO_OPTIONS, type Diet, type HelpNeed, type Transport, type Urgency, type Who } from "@/lib/types";
+import {
+  CATEGORY_OPTIONS,
+  WHO_OPTIONS,
+  type Category,
+  type Diet,
+  type HelpNeed,
+  type Transport,
+  type Urgency,
+  type Who,
+} from "@/lib/types";
 
 const DIETS: { value: Diet; label: string }[] = [
   { value: "any", label: "No restriction" },
@@ -40,6 +49,8 @@ export default function RequestHelpForm({
   const [urgency, setUrgency] = useState<Urgency>("tonight");
   const [notes, setNotes] = useState("");
   const [who, setWho] = useState<Who>("anyone");
+  const [category, setCategory] = useState<Category>("food");
+  const cat = CATEGORY_OPTIONS.find((c) => c.value === category)!;
 
   return (
     <Panel className="hl-rise overflow-hidden">
@@ -53,7 +64,8 @@ export default function RequestHelpForm({
           e.preventDefault();
           if (busy) return;
           onSubmit({
-            need: need.trim() || "Food assistance",
+            category,
+            need: need.trim() || cat.placeholder,
             locationText: locationText.trim() || "Oakland, CA",
             lat: 0,
             lng: 0,
@@ -65,19 +77,24 @@ export default function RequestHelpForm({
           });
         }}
       >
-        <div className="grid grid-cols-2 gap-2">
-          <button
-            type="button"
-            className="rounded-xl border border-violet-400/40 bg-violet-500/15 px-3 py-2.5 text-[13px] font-semibold text-violet-200"
-          >
-            🍲 Food
-          </button>
-          <div
-            title="Food assistance only for now — one flow, done properly."
-            className="cursor-not-allowed rounded-xl border border-white/8 bg-white/[0.03] px-3 py-2.5 text-center text-[13px] font-medium text-ink-500"
-          >
-            More soon
-          </div>
+        <div className="grid grid-cols-3 gap-2">
+          {CATEGORY_OPTIONS.map((c) => (
+            <button
+              key={c.value}
+              type="button"
+              onClick={() => {
+                setCategory(c.value);
+                setNeed(c.placeholder);
+              }}
+              className={`rounded-xl border px-2 py-2.5 text-[13px] font-semibold transition ${
+                category === c.value
+                  ? "border-violet-400/60 bg-violet-500/20 text-violet-100"
+                  : "border-white/10 bg-white/[0.03] text-mist-400 hover:border-white/25"
+              }`}
+            >
+              {c.emoji} {c.label}
+            </button>
+          ))}
         </div>
 
         <Field label="Who are you?" hint="changes which doors are open">
@@ -104,7 +121,7 @@ export default function RequestHelpForm({
           <TextInput
             value={need}
             onChange={(e) => setNeed(e.target.value)}
-            placeholder="Dinner tonight"
+            placeholder={cat.placeholder}
           />
         </Field>
 
@@ -116,7 +133,8 @@ export default function RequestHelpForm({
           />
         </Field>
 
-        <div className="grid grid-cols-2 gap-3">
+        <div className={`grid gap-3 ${category === "food" ? "grid-cols-2" : "grid-cols-1"}`}>
+          {category === "food" && (
           <Field label="Dietary need">
             <Select value={diet} onChange={(e) => setDiet(e.target.value as Diet)}>
               {DIETS.map((d) => (
@@ -126,6 +144,7 @@ export default function RequestHelpForm({
               ))}
             </Select>
           </Field>
+          )}
           <Field label="Getting there">
             <Select
               value={transport}

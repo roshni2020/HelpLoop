@@ -48,12 +48,14 @@ export async function POST(req: Request) {
 function normalize(body: Record<string, unknown>): HelpNeed {
   const str = (v: unknown, fallback = "") =>
     typeof v === "string" && v.trim() ? v.trim() : fallback;
+  const category = (["food", "clothing", "shelter"] as const).find((c) => c === body.category) ?? "food";
   return {
-    need: str(body.need, "Food assistance"),
+    category,
+    need: str(body.need, category === "shelter" ? "A bed tonight" : category === "clothing" ? "Clothes" : "Food assistance"),
     locationText: str(body.locationText, "Oakland, CA"),
     lat: Number(body.lat) || 0,
     lng: Number(body.lng) || 0,
-    diet: (str(body.diet, "any") as HelpNeed["diet"]) ?? "any",
+    diet: category === "food" ? ((str(body.diet, "any") as HelpNeed["diet"]) ?? "any") : "any",
     transport: (str(body.transport, "walking") as HelpNeed["transport"]) ?? "walking",
     urgency: (str(body.urgency, "tonight") as HelpNeed["urgency"]) ?? "tonight",
     who: (str(body.who, "anyone") as HelpNeed["who"]) ?? "anyone",

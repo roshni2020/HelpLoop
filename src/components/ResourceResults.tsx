@@ -16,6 +16,7 @@ export default function ResourceResults({
   onSelect,
   onRequestHelp,
   busy,
+  cta = "Need pickup help",
 }: {
   resources: Resource[];
   ranking: RankedResource[];
@@ -24,6 +25,7 @@ export default function ResourceResults({
   onSelect: (id: string) => void;
   onRequestHelp: (resource: Resource, rank: RankedResource | undefined) => void;
   busy?: boolean;
+  cta?: string;
 }) {
   const byId = new Map(resources.map((r) => [r.id, r]));
   const rows = ranking
@@ -64,6 +66,7 @@ export default function ResourceResults({
             onSelect={() => onSelect(best.resource.id)}
             onRequestHelp={() => onRequestHelp(best.resource, best.rank)}
             busy={busy}
+            cta={cta}
           />
         )}
 
@@ -89,12 +92,14 @@ function BestMatchCard({
   onSelect,
   onRequestHelp,
   busy,
+  cta = "Need pickup help",
 }: {
   row: { rank: RankedResource; resource: Resource };
   selected: boolean;
   onSelect: () => void;
   onRequestHelp: () => void;
   busy?: boolean;
+  cta?: string;
 }) {
   const { rank, resource } = row;
   return (
@@ -138,7 +143,7 @@ function BestMatchCard({
         disabled={busy}
         onClick={onRequestHelp}
       >
-        🙋 Need pickup help
+        🙋 {cta}
       </Button>
     </div>
   );

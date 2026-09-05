@@ -86,6 +86,7 @@ export default function RequesterPage() {
       try {
         const id = await realtime.createRequest({
           requesterName: "You",
+          category: need.category,
           need: need.need,
           locationText: research.origin.label.split(",").slice(0, 2).join(",").trim(),
           lat: research.origin.lat,
@@ -188,6 +189,7 @@ export default function RequesterPage() {
                   onSelect={setSelectedId}
                   onRequestHelp={handleRequestHelp}
                   busy={creating}
+                  cta={need?.category === "shelter" ? "Need help getting there" : "Need pickup help"}
                 />
               ) : (
                 <Panel className="hl-rise">

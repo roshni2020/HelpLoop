@@ -15,6 +15,15 @@ export type Transport = "walking" | "transit" | "bike" | "car";
 
 export type Urgency = "tonight" | "today" | "this-week";
 
+/** What kind of help. Each has its own search, gaps and ranking rules. */
+export type Category = "food" | "clothing" | "shelter";
+
+export const CATEGORY_OPTIONS: { value: Category; label: string; emoji: string; placeholder: string; cta: string }[] = [
+  { value: "food", label: "Food", emoji: "🍲", placeholder: "Dinner tonight", cta: "Need pickup help" },
+  { value: "clothing", label: "Clothes", emoji: "🧥", placeholder: "A warm coat and shoes", cta: "Need pickup help" },
+  { value: "shelter", label: "Shelter", emoji: "🛏️", placeholder: "A bed tonight", cta: "Need help getting there" },
+];
+
 /** Who is asking — it changes which doors are open to them. */
 export type Who = "anyone" | "student" | "parent" | "senior" | "veteran" | "unhoused";
 
@@ -29,6 +38,7 @@ export const WHO_OPTIONS: { value: Who; label: string; hint: string }[] = [
 
 /** What the person needing help told us. */
 export interface HelpNeed {
+  category: Category;
   need: string;
   locationText: string;
   lat: number;
@@ -51,6 +61,8 @@ export interface Resource {
   hours?: string;
   /** Parsed closing time in 24h minutes-from-midnight, when known. */
   closesAtMinutes?: number;
+  /** Shelter: whether beds are actually available tonight, when known. */
+  availability?: string;
   eligibility?: string;
   foodTypes: string[];
   walkIn?: boolean;
@@ -151,6 +163,7 @@ export interface HelpRequest {
   createdAt: number;
   updatedAt: number;
   requesterName: string;
+  category?: string;
   need: string;
   locationText: string;
   lat: number;
@@ -222,7 +235,7 @@ export interface Tracking {
 export const STATUS_LABEL: Record<RequestStatus, string> = {
   waiting: "Waiting for volunteer",
   assigned: "Volunteer assigned",
-  picked_up: "Food picked up",
+  picked_up: "Picked up",
   on_the_way: "On the way",
   delivered: "Delivered",
   cancelled: "Cancelled",

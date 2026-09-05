@@ -38,6 +38,7 @@ function res(input: ResourceInput): Resource {
 
 function need(overrides: Partial<HelpNeed> = {}): HelpNeed {
   return {
+    category: "food",
     need: "Dinner tonight",
     locationText: "Oakland, CA",
     lat: 37.8044,

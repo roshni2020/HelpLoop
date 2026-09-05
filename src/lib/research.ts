@@ -57,6 +57,14 @@ function slug(name: string): string {
 
 /** The seed query. Deliberately specific — vague queries return blog posts. */
 export function seedQuery(need: HelpNeed): string {
+  const when =
+    need.urgency === "tonight" ? "open tonight" : need.urgency === "today" ? "open today" : "open this week";
+  if (need.category === "shelter") {
+    return `emergency shelter and places to sleep tonight near ${need.locationText}${SHELTER_WHO[need.who ?? ""] ?? ""}: homeless shelters, warming centers, safe parking and transitional housing intake ${when}. Prefer official sources: the local 211 directory, county homelessness services and city shelter lists. Include name, street address, intake or check-in hours, who is eligible (gender, families, age, sobriety), whether beds are available without a referral, and a phone number.`;
+  }
+  if (need.category === "clothing") {
+    return `free clothing near ${need.locationText}: clothing closets, free stores, church and nonprofit clothing banks ${when}. Prefer official sources: the local 211 directory and nonprofit listings. Include name, street address, hours, what they provide (coats, shoes, work clothes, children's sizes), eligibility, and whether walk-ins are accepted.`;
+  }
   const diet = need.diet === "any" ? "" : `${need.diet} `;
   const who: Record<string, string> = {
     student: " including campus and student food pantries,",
@@ -65,12 +73,6 @@ export function seedQuery(need: HelpNeed): string {
     veteran: " including veteran food and meal services,",
     unhoused: " that require no address or ID,",
   };
-  const when =
-    need.urgency === "tonight"
-      ? "open tonight"
-      : need.urgency === "today"
-        ? "open today"
-        : "open this week";
   // Prefer the sources cities actually point residents to — food-bank
   // pantry locators (e.g. FoodNow.net), 211 directories, city service
   // lists — over aggregator blog posts, which are where stale hours live.
@@ -86,6 +88,7 @@ function toResource(raw: RawResource, index: number): Resource {
     hours: (raw.hours ?? "").trim(),
     closesAtMinutes: parseClosingMinutes(raw.hours),
     eligibility: (raw.eligibility ?? "").trim(),
+    availability: (raw.availability ?? "").trim() || undefined,
     foodTypes: (raw.foodTypes ?? []).map((f) => String(f).toLowerCase().trim()).filter(Boolean),
     walkIn,
     phone: raw.phone?.trim(),
@@ -445,6 +448,12 @@ export async function* runResearch(
   }
 }
 
+const SHELTER_WHO: Record<string, string> = {
+  parent: " for families with children",
+  senior: " for older adults",
+  veteran: " for veterans",
+};
+
 /** Phrasings a search engine uses to say it found nothing. */
 export const NO_INFO_RE =
   /\b(?:does not|doesn't|do not|don't)\s+(?:contain|specify|provide|mention|include|state|list|indicate)|\bno\s+(?:\w+\s+){0,2}(?:information|details?|mention|data)\b|\bnot\s+(?:specified|stated|mentioned|available|found|provided|listed|publicly)|\b(?:could|can)\s*not\s+(?:find|locate|determine|verify|confirm)|\bunable to\s+(?:find|determine|verify|confirm)|\bthere is no\s+(?:information|mention|detail)|\bno results?\b/i;
@@ -525,6 +534,11 @@ function applyAnswer(
         changed = true;
       }
     }
+  } else if (base === "availability") {
+    if (answer.length > 5) {
+      r.availability = truncate(answer, 160);
+      changed = true;
+    }
   } else if (base === "address") {
     const m = /\d+\s+[A-Za-z0-9.'-]+(?:\s+[A-Za-z0-9.'-]+){0,4}/.exec(answer);
     if (m && !r.address) {
@@ -554,6 +568,8 @@ function displayValue(r: Resource, field: string): string | undefined {
       return r.foodTypes.length ? r.foodTypes.join(", ") : undefined;
     case "address":
       return r.address || undefined;
+    case "availability":
+      return r.availability ? truncate(r.availability, 90) : undefined;
     default:
       return undefined;
   }

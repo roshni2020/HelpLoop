@@ -397,9 +397,12 @@ function OpenRequestCard({
     >
       <div className="flex items-start justify-between gap-2">
         <div className="min-w-0">
-          <p className="text-[13px] font-bold text-white">🆘 {request.need}</p>
+          <p className="text-[13px] font-bold text-white">
+            {request.category === "shelter" ? "🛏️" : request.category === "clothing" ? "🧥" : "🍲"} {request.need}
+          </p>
           <p className="mt-0.5 text-[11px] text-mist-400">
-            Pick up from <span className="text-mist-200">{request.resource.name}</span>
+            {request.category === "shelter" ? "Get them to" : "Pick up from"}{" "}
+            <span className="text-mist-200">{request.resource.name}</span>
           </p>
           <p className="text-[10.5px] text-ink-500">{request.resource.address}</p>
         </div>

@@ -278,9 +278,9 @@ scripts/          eval harness, 20 labelled scenarios, preflight, parser test
 
 ## Scope, deliberately
 
-Not built: payments, auth, messaging, background checks, real GPS tracking,
-organization admin panels, causes beyond food. The story is one flow done
-properly.
+Three categories — food, clothing, shelter — each with its own search, gap
+checks and ranking rules. Not built: payments, auth, messaging, background
+checks, organization admin panels.
 
 ## A note on the demo data
 

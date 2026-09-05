@@ -37,6 +37,7 @@ export const open = query({
 export const create = mutation({
   args: {
     requesterName: v.string(),
+    category: v.optional(v.string()),
     need: v.string(),
     locationText: v.string(),
     lat: v.number(),

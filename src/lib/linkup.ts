@@ -89,7 +89,12 @@ export const RESOURCE_SEARCH_SCHEMA = {
             type: "array",
             items: { type: "string" },
             description:
-              "Dietary options offered, e.g. vegetarian, vegan, halal, hot meals, groceries.",
+              "What they provide, e.g. vegetarian, hot meals, groceries, coats, shoes, children's clothing, beds, showers, warming center.",
+          },
+          availability: {
+            type: "string",
+            description:
+              "For shelters: whether beds are available tonight and how intake works. Empty string if not stated or not a shelter.",
           },
           walkIn: {
             type: "string",
@@ -111,6 +116,7 @@ export interface RawResource {
   eligibility?: string;
   foodTypes?: string[];
   walkIn?: string;
+  availability?: string;
   phone?: string;
   website?: string;
 }

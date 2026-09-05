@@ -18,6 +18,7 @@ export default defineSchema({
     createdAt: v.number(),
     updatedAt: v.number(),
     requesterName: v.string(),
+    category: v.optional(v.string()),
     need: v.string(),
     locationText: v.string(),
     lat: v.number(),
