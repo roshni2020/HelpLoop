@@ -3,7 +3,7 @@
 import dynamic from "next/dynamic";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import confetti from "canvas-confetti";
-import { useRealtime } from "@/components/RealtimeProvider";
+import { useContact, useRealtime } from "@/components/RealtimeProvider";
 import MissionBanner from "@/components/MissionBanner";
 import { Button, Chip, Empty, Panel, PanelHeader, TextInput, timeAgo } from "@/components/ui";
 import { distanceMiles, scatterAround } from "@/lib/geo";
@@ -25,6 +25,7 @@ const MapCanvas = dynamic(() => import("@/components/MapCanvas"), {
 });
 
 const NAME_KEY = "helploop.volunteerName";
+const PHONE_KEY = "helploop.volunteerPhone";
 const VOL_ID_KEY = "helploop.volunteerId";
 const DOC_ID_KEY = "helploop.volunteerDocId";
 
@@ -44,6 +45,7 @@ type LocationSource = "gps" | "simulated" | "off";
 export default function VolunteerPage() {
   const realtime = useRealtime();
   const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
   const [volunteerId, setVolunteerId] = useState("");
   const [docId, setDocId] = useState<string | null>(null);
   const [joined, setJoined] = useState(false);
@@ -54,6 +56,7 @@ export default function VolunteerPage() {
 
   useEffect(() => {
     const storedName = window.localStorage.getItem(NAME_KEY);
+    setPhone(window.localStorage.getItem(PHONE_KEY) ?? "");
     let id = window.localStorage.getItem(VOL_ID_KEY);
     if (!id) {
       id = `vol_${Math.random().toString(36).slice(2, 9)}`;
@@ -82,6 +85,8 @@ export default function VolunteerPage() {
     (r) => r.volunteerId === volunteerId && r.status === "delivered",
   );
   const activeJob = myJobs.find((j) => j._id === focusId) ?? myJobs[0] ?? null;
+  const me = realtime.volunteers.find((v) => v._id === docId) ?? null;
+  const contact = useContact(activeJob?._id ?? null, volunteerId || undefined);
 
   // A starting point when the device gives us nothing: fixed per volunteer.
   const fallbackPosition = useMemo(() => {
@@ -96,7 +101,7 @@ export default function VolunteerPage() {
   useEffect(() => {
     if (!joined || !name) return;
     realtime
-      .checkIn(name, myPosition)
+      .checkIn(name, myPosition, phone)
       .then((id) => {
         if (id) {
           setDocId(id);
@@ -234,6 +239,7 @@ export default function VolunteerPage() {
               const trimmed = name.trim();
               if (!trimmed) return;
               window.localStorage.setItem(NAME_KEY, trimmed);
+              window.localStorage.setItem(PHONE_KEY, phone.trim());
               setName(trimmed);
               setJoined(true);
             }}
@@ -244,6 +250,13 @@ export default function VolunteerPage() {
               onChange={(e) => setName(e.target.value)}
               placeholder="Maya"
               maxLength={24}
+            />
+            <TextInput
+              type="tel"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              placeholder="Phone (optional) - only shown to the person you help"
+              autoComplete="tel"
             />
             <Button type="submit" size="lg" className="w-full" disabled={!name.trim()}>
               I&apos;m ready to help
@@ -277,7 +290,9 @@ export default function VolunteerPage() {
           <Panel className="hl-rise overflow-hidden">
             <PanelHeader
               title={`Hi ${name} 👋`}
-              subtitle={`${myDone.length} ${myDone.length === 1 ? "delivery" : "deliveries"} completed`}
+              subtitle={`${myDone.length} ${myDone.length === 1 ? "delivery" : "deliveries"} completed${
+                me?.rating ? ` \u00b7 \u2605 ${me.rating.toFixed(1)} from ${me.ratingCount} rating${me.ratingCount === 1 ? "" : "s"}` : ""
+              }`}
               right={
                 <Chip tone={realtime.mode === "convex" ? "good" : "neutral"}>
                   {realtime.mode === "convex" ? "Convex live" : "local sync"}
@@ -301,6 +316,15 @@ export default function VolunteerPage() {
                 subtitle="Tap the next step as you go — the requester sees it instantly."
               />
               <div className="space-y-3 p-3">
+                {contact?.requesterPhone && (
+                  <a
+                    href={`tel:${contact.requesterPhone}`}
+                    className="flex items-center justify-between rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2.5 text-[13.5px] hover:border-white/25"
+                  >
+                    <span className="text-mist-400">📞 Call the person you are helping</span>
+                    <span className="font-mono text-white">{contact.requesterPhone}</span>
+                  </a>
+                )}
                 {myJobs.map((job) => (
                   <MissionCard
                     key={job._id}

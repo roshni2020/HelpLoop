@@ -2,7 +2,7 @@
 
 import dynamic from "next/dynamic";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { useRealtime, useTracking } from "@/components/RealtimeProvider";
+import { useContact, useRealtime, useTracking } from "@/components/RealtimeProvider";
 import RequestHelpForm from "@/components/RequestHelpForm";
 import ResearchFeed from "@/components/ResearchFeed";
 import ResourceResults from "@/components/ResourceResults";
@@ -56,6 +56,7 @@ export default function RequesterPage() {
   // Live, privacy-rounded position of whoever is helping — null until
   // someone accepts, or when running on the local shim.
   const tracking = useTracking(myRequest && myRequest.status !== "waiting" ? myRequest._id : null);
+  const contact = useContact(myRequest && myRequest.status !== "waiting" ? myRequest._id : null);
 
   const bestId = research.ranking[0]?.resourceId ?? null;
   const scores = useMemo(
@@ -96,6 +97,7 @@ export default function RequesterPage() {
           transport: need.transport,
           urgency: need.urgency,
           who: need.who,
+          requesterPhone: need.phone,
           matchScore: rank?.score,
           matchReason: rank?.reason,
           resource: {
@@ -178,7 +180,13 @@ export default function RequesterPage() {
       <div className="absolute inset-y-0 left-0 flex w-full max-w-[460px] flex-col gap-3 overflow-y-auto p-3 md:max-w-[440px]">
         <div className="flex shrink-0 flex-col gap-3">
           {myRequest ? (
-            <LiveRequestCard request={myRequest} tracking={tracking} onNewRequest={handleNewRequest} />
+            <LiveRequestCard
+              request={myRequest}
+              tracking={tracking}
+              volunteerPhone={contact?.volunteerPhone ?? null}
+              onNewRequest={handleNewRequest}
+              onRate={(stars) => realtime.rate(myRequest._id, stars)}
+            />
           ) : research.phase === "idle" ? (
             <RequestHelpForm onSubmit={handleSubmit} busy={running} />
           ) : (

@@ -48,6 +48,8 @@ export interface HelpNeed {
   urgency: Urgency;
   who?: Who;
   notes?: string;
+  /** Optional, shared only with the volunteer who accepts. */
+  phone?: string;
 }
 
 /** One community resource discovered (and verified) by Linkup. */
@@ -179,6 +181,11 @@ export interface HelpRequest {
   volunteerDocId?: string;
   matchScore?: number;
   matchReason?: string;
+  rating?: number;
+  /** Whether the requester left a number; the number itself is never listed. */
+  hasPhone?: boolean;
+  /** Only present on the create payload; the server never lists it back. */
+  requesterPhone?: string;
   resource: {
     id: string;
     name: string;
@@ -214,6 +221,9 @@ export interface VolunteerPublic {
   heading?: number;
   activeRequestId?: string;
   completed: number;
+  /** Average of requester ratings, 1-5, when any exist. */
+  rating?: number;
+  ratingCount?: number;
   lastSeen: number;
   locationUpdatedAt?: number;
 }
@@ -230,6 +240,14 @@ export interface Tracking {
   stale: boolean;
   updatedAt: number;
   volunteerName: string;
+  rating?: number;
+  ratingCount?: number;
+}
+
+/** Contact details for a matched pair — only the other side's number. */
+export interface Contact {
+  requesterPhone: string | null;
+  volunteerPhone: string | null;
 }
 
 export const STATUS_LABEL: Record<RequestStatus, string> = {

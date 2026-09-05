@@ -24,7 +24,7 @@ import {
 import { ConvexProvider, ConvexReactClient, useMutation, useQuery } from "convex/react";
 import { anyApi } from "convex/server";
 import { localStore } from "@/lib/local-store";
-import type { HelpRequest, RequestStatus, Tracking, VolunteerPublic } from "@/lib/types";
+import type { Contact, HelpRequest, RequestStatus, Tracking, VolunteerPublic } from "@/lib/types";
 
 // Untyped function references: they resolve at runtime against whatever
 // `npx convex dev` deployed, so the app compiles before codegen has run.
@@ -55,8 +55,13 @@ export interface RealtimeApi {
     volunteerDocId?: string,
   ): Promise<{ ok: boolean; reason?: string }>;
   advance(requestId: string, status: RequestStatus, by?: string): Promise<void>;
+  rate(requestId: string, stars: number): Promise<void>;
   /** Returns the volunteer's row id, needed for accept() and updateLocation(). */
-  checkIn(name: string, position?: { lat: number; lng: number }): Promise<string | undefined>;
+  checkIn(
+    name: string,
+    position?: { lat: number; lng: number },
+    phone?: string,
+  ): Promise<string | undefined>;
   updateLocation(volunteerDocId: string, lat: number, lng: number, heading?: number): Promise<void>;
   seedBots(center: { lat: number; lng: number }, count?: number): Promise<void>;
   clearBots(): Promise<void>;
@@ -102,6 +107,23 @@ export function useTracking(requestId: string | null | undefined): Tracking | nu
   return null;
 }
 
+/** The other party's phone number, once matched; null otherwise. */
+export function useContact(requestId: string | null | undefined, asVolunteerId?: string): Contact | null {
+  if (convexClient) {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    return useConvexContact(requestId, asVolunteerId);
+  }
+  return null;
+}
+
+function useConvexContact(requestId: string | null | undefined, asVolunteerId?: string): Contact | null {
+  const result = useQuery(
+    api.requests.contact as never,
+    (requestId ? { id: requestId, asVolunteerId } : "skip") as never,
+  ) as Contact | null | undefined;
+  return result ?? null;
+}
+
 function useConvexTracking(requestId: string | null | undefined): Tracking | null {
   const result = useQuery(
     api.tracking.forRequest as never,
@@ -120,6 +142,7 @@ function ConvexRealtime({ children }: { children: ReactNode }) {
   const createMutation = useMutation(api.requests.create as never);
   const acceptMutation = useMutation(api.requests.accept as never);
   const advanceMutation = useMutation(api.requests.advance as never);
+  const rateMutation = useMutation(api.requests.rate as never);
   const clearMutation = useMutation(api.requests.clearAll as never);
   const checkInMutation = useMutation(api.volunteers.checkIn as never);
   const updateLocationMutation = useMutation(api.volunteers.updateLocation as never);
@@ -162,8 +185,11 @@ function ConvexRealtime({ children }: { children: ReactNode }) {
       async advance(requestId, status, by) {
         await advanceMutation({ id: requestId, status, by } as never);
       },
-      async checkIn(name, position) {
-        const id = await checkInMutation({ name, lat: position?.lat, lng: position?.lng } as never);
+      async rate(requestId, stars) {
+        await rateMutation({ id: requestId, stars } as never);
+      },
+      async checkIn(name, position, phone) {
+        const id = await checkInMutation({ name, lat: position?.lat, lng: position?.lng, phone } as never);
         return id ? String(id) : undefined;
       },
       async updateLocation(volunteerDocId, lat, lng, heading) {
@@ -186,6 +212,7 @@ function ConvexRealtime({ children }: { children: ReactNode }) {
       createMutation,
       acceptMutation,
       advanceMutation,
+      rateMutation,
       clearMutation,
       checkInMutation,
       updateLocationMutation,
@@ -239,6 +266,7 @@ function LocalRealtime({ children }: { children: ReactNode }) {
       createRequest,
       accept,
       advance,
+      rate: noop,
       checkIn,
       updateLocation: noop,
       seedBots: noop,

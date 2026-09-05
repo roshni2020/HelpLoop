@@ -56,6 +56,8 @@ export const forRequest = query({
       stale: !vol.isBot && Date.now() - updatedAt > STALE_MS,
       updatedAt,
       volunteerName: vol.name,
+      rating: vol.ratingCount ? Math.round(((vol.ratingSum ?? 0) / vol.ratingCount) * 10) / 10 : undefined,
+      ratingCount: vol.ratingCount ?? 0,
     };
   },
 });

@@ -34,6 +34,10 @@ export default defineSchema({
     volunteerDocId: v.optional(v.id("volunteers")),
     matchScore: v.optional(v.number()),
     matchReason: v.optional(v.string()),
+    /** 1-5, given by the requester after delivery. */
+    rating: v.optional(v.number()),
+    /** Optional. Served to the assigned volunteer only (see requests.list). */
+    requesterPhone: v.optional(v.string()),
     resource: v.object({
       id: v.string(),
       name: v.string(),
@@ -69,6 +73,10 @@ export default defineSchema({
     locationUpdatedAt: v.optional(v.number()),
     lastSeen: v.number(),
     completed: v.number(),
+    ratingSum: v.optional(v.number()),
+    ratingCount: v.optional(v.number()),
+    /** Optional. Served to the requester they are helping only. */
+    phone: v.optional(v.string()),
   })
     .index("by_available", ["available"])
     .index("by_bot", ["isBot"]),

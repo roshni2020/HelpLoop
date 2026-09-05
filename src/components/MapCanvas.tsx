@@ -790,7 +790,7 @@ function buildMarkerSpecs(args: {
       lng: v.lng,
       emoji: "🛵",
       color: "#46b5ff",
-      label: v.isBot ? `${v.name} 🤖` : v.name,
+      label: `${v.name}${v.isBot ? " 🤖" : ""}${v.rating ? ` \u2605${v.rating.toFixed(1)}` : ""}`,
       avatar: "rider",
       isBot: v.isBot,
       heading: v.heading,

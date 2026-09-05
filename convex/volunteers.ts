@@ -23,6 +23,8 @@ export const list = query({
         heading: r.heading,
         activeRequestId: r.activeRequestId,
         completed: r.completed,
+        rating: r.ratingCount ? Math.round(((r.ratingSum ?? 0) / r.ratingCount) * 10) / 10 : undefined,
+        ratingCount: r.ratingCount ?? 0,
         lastSeen: r.lastSeen,
         locationUpdatedAt: r.locationUpdatedAt,
       };
@@ -36,8 +38,9 @@ export const checkIn = mutation({
     name: v.string(),
     lat: v.optional(v.number()),
     lng: v.optional(v.number()),
+    phone: v.optional(v.string()),
   },
-  handler: async (ctx, { name, lat, lng }) => {
+  handler: async (ctx, { name, lat, lng, phone }) => {
     const existing = await ctx.db
       .query("volunteers")
       .filter((q) => q.and(q.eq(q.field("name"), name), q.neq(q.field("isBot"), true)))
@@ -47,6 +50,7 @@ export const checkIn = mutation({
       await ctx.db.patch(existing._id, {
         available: true,
         lastSeen: now,
+        ...(phone !== undefined ? { phone: phone || undefined } : {}),
         ...(lat !== undefined && lng !== undefined
           ? { lat, lng, locationUpdatedAt: now }
           : {}),
@@ -57,6 +61,7 @@ export const checkIn = mutation({
       name,
       available: true,
       isBot: false,
+      phone: phone || undefined,
       lat,
       lng,
       locationUpdatedAt: lat !== undefined ? now : undefined,

@@ -48,6 +48,7 @@ export default function RequestHelpForm({
   const [transport, setTransport] = useState<Transport>("walking");
   const [urgency, setUrgency] = useState<Urgency>("tonight");
   const [notes, setNotes] = useState("");
+  const [phone, setPhone] = useState("");
   const [who, setWho] = useState<Who>("anyone");
   const [category, setCategory] = useState<Category>("food");
   const cat = CATEGORY_OPTIONS.find((c) => c.value === category)!;
@@ -74,6 +75,7 @@ export default function RequestHelpForm({
             urgency,
             who,
             notes: notes.trim() || undefined,
+            phone: phone.trim() || undefined,
           });
         }}
       >
@@ -181,6 +183,16 @@ export default function RequestHelpForm({
               </button>
             ))}
           </div>
+        </Field>
+
+        <Field label="Phone" hint="optional - only your volunteer sees it">
+          <TextInput
+            type="tel"
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            placeholder="(510) 555-0123"
+            autoComplete="tel"
+          />
         </Field>
 
         <Field label="Anything else" hint="optional">

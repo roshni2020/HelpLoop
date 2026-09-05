@@ -4,7 +4,7 @@
 // shim) subscription pushes, and this component just renders whatever
 // the shared task state currently says.
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import confetti from "canvas-confetti";
 import { Button, Chip, Panel, PanelHeader, timeAgo } from "./ui";
 import {
@@ -42,13 +42,18 @@ const HEADLINE: Record<RequestStatus, { title: string; body: string }> = {
 export default function LiveRequestCard({
   request,
   tracking,
+  volunteerPhone,
   onNewRequest,
+  onRate,
 }: {
   request: HelpRequest;
   tracking?: Tracking | null;
+  volunteerPhone?: string | null;
   onNewRequest: () => void;
+  onRate?: (stars: number) => void;
 }) {
   const celebrated = useRef(false);
+  const [hover, setHover] = useState(0);
 
   useEffect(() => {
     if (request.status !== "delivered" || celebrated.current) return;
@@ -112,6 +117,7 @@ export default function LiveRequestCard({
             <div className="flex items-center justify-between gap-2">
               <p className="text-[14px] font-semibold text-white">
                 {tracking.isBot ? "🤖" : "🛵"} {tracking.volunteerName}
+                {tracking.rating ? ` · ★ ${tracking.rating.toFixed(1)} (${tracking.ratingCount})` : ""}
                 {tracking.stale ? " · last seen a while ago" : " · live"}
               </p>
               <span className="rounded-lg bg-white/5 px-2 py-0.5 font-mono text-[12.5px] text-sky-300">
@@ -127,6 +133,16 @@ export default function LiveRequestCard({
               never shared.
             </p>
           </div>
+        )}
+
+        {volunteerPhone && !done && (
+          <a
+            href={`tel:${volunteerPhone}`}
+            className="mt-3 flex items-center justify-between rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2.5 text-[13.5px] hover:border-white/25"
+          >
+            <span className="text-mist-400">📞 Call {request.volunteerName ?? "your volunteer"}</span>
+            <span className="font-mono text-white">{volunteerPhone}</span>
+          </a>
         )}
 
         <ol className="mt-4 space-y-0">
@@ -189,6 +205,34 @@ export default function LiveRequestCard({
           )}
         </div>
 
+        {done && onRate && (
+          <div className="mt-3 rounded-xl border border-white/10 bg-white/[0.03] p-3 text-center">
+            <p className="text-[13.5px] font-semibold text-white">
+              {request.rating
+                ? `You rated ${request.volunteerName ?? "your volunteer"}`
+                : `How was ${request.volunteerName ?? "your volunteer"}?`}
+            </p>
+            <div className="mt-1.5 flex justify-center gap-1" onMouseLeave={() => setHover(0)}>
+              {[1, 2, 3, 4, 5].map((n) => (
+                <button
+                  key={n}
+                  type="button"
+                  aria-label={`${n} star${n === 1 ? "" : "s"}`}
+                  onMouseEnter={() => setHover(n)}
+                  onClick={() => onRate(n)}
+                  className={`text-2xl transition hover:scale-110 ${
+                    n <= (hover || request.rating || 0) ? "text-amber-300 drop-shadow" : "text-ink-500"
+                  }`}
+                >
+                  ★
+                </button>
+              ))}
+            </div>
+            <p className="mt-1 text-[12px] text-ink-500">
+              {request.rating ? "Thanks. This shows on their name for the next person." : "Ratings show on the volunteer\u2019s name."}
+            </p>
+          </div>
+        )}
         {done && (
           <Button variant="ghost" className="mt-3 w-full" onClick={onNewRequest}>
             Start a new request
