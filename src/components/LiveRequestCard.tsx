@@ -94,7 +94,7 @@ export default function LiveRequestCard({
           }`}
         >
           <div className="hl-pop text-3xl">{STATUS_EMOJI[request.status]}</div>
-          <h3 className="mt-1.5 text-[19px] font-bold text-white">
+          <h3 className="mt-1.5 text-[22px] font-black tracking-tight text-white">
             {request.status === "assigned" && request.volunteerName
               ? `${request.volunteerName} is helping you`
               : head.title}

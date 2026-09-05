@@ -4,6 +4,7 @@ import dynamic from "next/dynamic";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import confetti from "canvas-confetti";
 import { useRealtime } from "@/components/RealtimeProvider";
+import MissionBanner from "@/components/MissionBanner";
 import { Button, Chip, Empty, Panel, PanelHeader, TextInput, timeAgo } from "@/components/ui";
 import { distanceMiles, scatterAround } from "@/lib/geo";
 import {
@@ -268,6 +269,8 @@ export default function VolunteerPage() {
         selfVolunteerId={docId}
         mission={mission}
       />
+
+      <MissionBanner status={activeJob?.status ?? null} />
 
       <div className="absolute inset-y-0 left-0 flex w-full max-w-[460px] flex-col gap-3 overflow-y-auto p-3 md:max-w-[440px]">
         <div className="flex shrink-0 flex-col gap-3">

@@ -6,7 +6,7 @@
 import { Button, Chip, ConfidenceBar, Panel, PanelHeader } from "./ui";
 import { describeHours } from "@/lib/gaps";
 import { shortModel } from "@/hooks/useResearch";
-import type { RankMeta, RankedResource, Resource } from "@/lib/types";
+import type { RankMeta, RankedResource, ResearchFinding, Resource } from "@/lib/types";
 
 export default function ResourceResults({
   resources,
@@ -17,6 +17,7 @@ export default function ResourceResults({
   onRequestHelp,
   busy,
   cta = "Need pickup help",
+  findings = [],
 }: {
   resources: Resource[];
   ranking: RankedResource[];
@@ -26,6 +27,7 @@ export default function ResourceResults({
   onRequestHelp: (resource: Resource, rank: RankedResource | undefined) => void;
   busy?: boolean;
   cta?: string;
+  findings?: ResearchFinding[];
 }) {
   const byId = new Map(resources.map((r) => [r.id, r]));
   const rows = ranking
@@ -57,6 +59,8 @@ export default function ResourceResults({
           )
         }
       />
+
+      <ResearchSummary resources={resources} findings={findings} />
 
       <div className="min-h-0 flex-1 space-y-2.5 overflow-y-auto p-3">
         {best && (
@@ -122,7 +126,11 @@ function BestMatchCard({
       </div>
 
       <h3 className="text-[17px] font-bold leading-tight text-white">{resource.name}</h3>
-      <p className="mt-1 text-[13.5px] leading-5 text-amber-100/85">{rank.reason}</p>
+      <p className="mt-2 text-[11.5px] font-semibold uppercase tracking-[0.09em] text-amber-300/80">
+        Why it fits
+      </p>
+      <p className="mt-0.5 text-[13.5px] leading-5 text-amber-100/90">{rank.reason}</p>
+      <Verification resource={resource} />
 
       <ResourceFacts resource={resource} />
 
@@ -257,5 +265,61 @@ function ResourceFacts({
         <ConfidenceBar value={resource.confidence} />
       </div>
     </>
+  );
+}
+
+
+/** One line judges can read at a glance: what the research actually did. */
+function ResearchSummary({
+  resources,
+  findings,
+}: {
+  resources: Resource[];
+  findings: ResearchFinding[];
+}) {
+  const followUps = findings.filter((f) => f.kind === "gap").length;
+  const conflicts = findings.filter((f) => f.kind === "conflict").length;
+  const multiSource = resources.filter((r) => r.sources.length >= 2).length;
+  const unresolved = resources.reduce((n, r) => n + r.gaps.length, 0);
+  return (
+    <div className="grid grid-cols-2 gap-1.5 border-b border-white/10 px-3 py-2.5 text-[12.5px]">
+      <span className="text-mist-200">🔎 Found {resources.length} resources</span>
+      <span className="text-sky-300">↩ {followUps} follow-up searches</span>
+      <span className="text-emerald-300">✓ {multiSource} verified from 2+ sources</span>
+      <span className={unresolved ? "text-amber-300" : "text-mist-400"}>
+        {conflicts ? `⚠ ${conflicts} conflict${conflicts === 1 ? "" : "s"} settled · ` : ""}
+        {unresolved ? `${unresolved} detail${unresolved === 1 ? "" : "s"} still unverified` : "all details verified"}
+      </span>
+    </div>
+  );
+}
+
+const FIELD_LABEL: Record<string, string> = {
+  hours: "hours",
+  walkIn: "walk-in",
+  diet: "diet",
+  eligibility: "eligibility",
+  availability: "beds tonight",
+  address: "address",
+};
+
+/** What we verified vs. what we couldn't, plus how many sources back it. */
+function Verification({ resource }: { resource: Resource }) {
+  const all = ["hours", "walkIn", "eligibility", "address"];
+  const unverified = resource.gaps.filter((g) => all.includes(g) || g === "availability");
+  const verified = all.filter((f) => !resource.gaps.includes(f));
+  const n = resource.sources.length;
+  return (
+    <div className="mt-2 flex flex-wrap items-center gap-1.5 text-[12px]">
+      <span className="rounded-full border border-white/12 bg-white/5 px-2 py-0.5 text-mist-200">
+        {n} source{n === 1 ? "" : "s"}
+      </span>
+      {verified.length > 0 && (
+        <span className="text-emerald-300">✓ {verified.map((f) => FIELD_LABEL[f]).join(", ")}</span>
+      )}
+      {unverified.length > 0 && (
+        <span className="text-amber-300">? {unverified.map((f) => FIELD_LABEL[f] ?? f).join(", ")} unverified</span>
+      )}
+    </div>
   );
 }

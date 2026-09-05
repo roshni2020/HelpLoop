@@ -7,6 +7,7 @@ import RequestHelpForm from "@/components/RequestHelpForm";
 import ResearchFeed from "@/components/ResearchFeed";
 import ResourceResults from "@/components/ResourceResults";
 import LiveRequestCard from "@/components/LiveRequestCard";
+import MissionBanner from "@/components/MissionBanner";
 import { Panel, Button, Empty } from "@/components/ui";
 import { useResearch } from "@/hooks/useResearch";
 import { scatterAround } from "@/lib/geo";
@@ -159,7 +160,7 @@ export default function RequesterPage() {
         center={center}
         // Once the request exists it carries its own pin at this spot,
         // so a second "You" marker would just sit underneath it.
-        origin={myRequest ? null : research.origin}
+        origin={myRequest || !research.origin ? null : { ...research.origin, label: "You" }}
         resources={myRequest ? [] : research.resources}
         bestResourceId={bestId}
         selectedResourceId={selectedId}
@@ -170,6 +171,8 @@ export default function RequesterPage() {
         volunteers={realtime.volunteers}
         mission={mission}
       />
+
+      <MissionBanner status={myRequest?.status} />
 
       {/* Left rail: the request, then the ranked results */}
       <div className="absolute inset-y-0 left-0 flex w-full max-w-[460px] flex-col gap-3 overflow-y-auto p-3 md:max-w-[440px]">
@@ -190,6 +193,7 @@ export default function RequesterPage() {
                   onRequestHelp={handleRequestHelp}
                   busy={creating}
                   cta={need?.category === "shelter" ? "Need help getting there" : "Need pickup help"}
+                  findings={research.findings}
                 />
               ) : (
                 <Panel className="hl-rise">

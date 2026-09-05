@@ -52,10 +52,10 @@ try {
   await page.screenshot({ path: "shots/bots-02-accepted.png" });
 
   // Watch the bot progress the mission on its own.
-  await page.getByText("Food picked up").first().waitFor({ timeout: 120000 });
+  await page.locator("h3", { hasText: /^Picked up$/ }).waitFor({ timeout: 120000 });
   check(true, "bot reached the pantry → status advanced to picked up (no human input)");
   await page.screenshot({ path: "shots/bots-03-picked-up.png" });
-  await page.getByText("On the way to you").first().waitFor({ timeout: 30000 });
+  await page.locator("h3", { hasText: /^On the way to you$/ }).waitFor({ timeout: 30000 });
   check(true, "bot → on the way");
   await page.waitForTimeout(4000);
   await page.screenshot({ path: "shots/bots-04-en-route.png" });

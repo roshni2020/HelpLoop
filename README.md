@@ -132,11 +132,11 @@ about.
 
 | Model | Top-1 | p50 | p95 | $/req |
 | --- | --- | --- | --- | --- |
-| `openai/gpt-oss-120b` ← chosen | 18/20 | 1.61s | **2.31s** | $0.00027 |
+| `openai/gpt-oss-120b` ← chosen | 19/20 | 1.59s | **2.37s** | $0.00027 |
 | `Qwen/Qwen3-30B-A3B-Instruct-2507` | 18/20 | 3.16s | 5.12s | $0.00015 |
 | `meta-llama/Llama-3.3-70B-Instruct` | 18/20 | 2.92s | **17.72s** | $0.00014 |
 
-Identical accuracy; p95 spans 8×. On an earlier Llama run the p95 was 38s —
+Accuracy within one case of each other — indistinguishable at n=20; p95 spans 8×. On an earlier Llama run the p95 was 38s —
 that tail is unstable run to run, which is itself the point. Someone who has
 not eaten is waiting on this call, so the 70B was dropped for its worst case
 despite matching on quality. `npm run eval -- --model <id> --out <name>`

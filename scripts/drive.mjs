@@ -150,12 +150,13 @@ try {
 
   // ── Run the mission ──────────────────────────────────────
   for (const [label, expect] of [
-    [/Picked up/, "Food picked up"],
+    [/Picked up/, "Picked up"],
     [/On the way/, "On the way to you"],
     [/Delivered/, "Delivered"],
   ]) {
     await volunteer.getByRole("button", { name: label }).first().click({ force: true });
-    await requester.getByText(expect).first().waitFor({ timeout: 15000 });
+    // The big status headline, not the (always-present) timeline label.
+    await requester.locator("h3", { hasText: new RegExp(`^${expect}$`) }).waitFor({ timeout: 15000 });
     check(true, `status '${expect}' propagated live${viaConvex ? " across contexts" : ""}`);
     await requester.waitForTimeout(1400);
   }

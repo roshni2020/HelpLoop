@@ -93,6 +93,11 @@ export default function RequestHelpForm({
               }`}
             >
               {c.emoji} {c.label}
+              {c.value !== "food" && (
+                <span className="ml-1 rounded bg-white/10 px-1 py-px text-[9px] font-bold uppercase tracking-wide text-mist-400">
+                  beta
+                </span>
+              )}
             </button>
           ))}
         </div>
