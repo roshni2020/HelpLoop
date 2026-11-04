@@ -1,17 +1,22 @@
 // ─────────────────────────────────────────────────────────────
 // Simulated volunteers.
 //
-// Bots are ordinary rows in `volunteers` with isBot=true. A Convex cron
-// (crons.ts) calls `tick` every two seconds: idle bots wander, then pick
-// up the oldest waiting request that a human hasn't claimed within a
-// grace period; busy bots ride to the pantry, then to the requester,
-// advancing the request's status on arrival exactly as a person would.
+// Bots are ordinary rows in `volunteers` with isBot=true. `tick` runs every
+// two seconds while bots exist: idle bots wander, then pick up the oldest
+// waiting request that a human hasn't claimed within a grace period; busy
+// bots ride to the pantry, then to the requester, advancing the request's
+// status on arrival exactly as a person would.
+//
+// `seed` starts the loop and `tick` keeps it going. It stops by itself once
+// the bots are gone, so an idle deployment makes no function calls. A forgotten
+// demo can't drain the plan either: idle bots are removed after BOT_TTL_MS.
 //
 // Because they move by patching their own row, the same privacy-rounded
 // tracking query serves both bots and humans — the requester's map can't
 // tell the difference, and shouldn't.
 // ─────────────────────────────────────────────────────────────
 
+import { internal } from "./_generated/api";
 import { internalMutation, mutation, query, type MutationCtx } from "./_generated/server";
 import type { Doc } from "./_generated/dataModel";
 import { v } from "convex/values";
@@ -24,6 +29,7 @@ const ARRIVE_METERS = 70;
 /** Humans get first refusal on every request. */
 const HUMAN_GRACE_MS = 8_000;
 const WANDER_METERS = 30;
+const BOT_TTL_MS = 30 * 60_000;
 
 const BOT_NAMES = [
   "Scooter Sam",
@@ -44,7 +50,7 @@ export const count = query({
 /** Drop N bots around a point, 600–2200 m out in random directions. */
 export const seed = mutation({
   args: { lat: v.number(), lng: v.number(), count: v.optional(v.number()) },
-  handler: async (ctx, { lat, lng, count }) => {
+  handler: async (ctx, { lat, lng, count }): Promise<{ created: number; total: number }> => {
     const existing = await ctx.db
       .query("volunteers")
       .withIndex("by_bot", (q) => q.eq("isBot", true))
@@ -69,6 +75,7 @@ export const seed = mutation({
       });
       created++;
     }
+    await ensureTicking(ctx);
     return { created, total: existing.length + created };
   },
 });
@@ -81,33 +88,15 @@ export const clear = mutation({
       .query("volunteers")
       .withIndex("by_bot", (q) => q.eq("isBot", true))
       .collect();
-    for (const bot of bots) {
-      if (bot.activeRequestId) {
-        const req = await ctx.db.get(bot.activeRequestId);
-        if (req && req.status !== "delivered" && req.status !== "cancelled") {
-          await ctx.db.patch(req._id, {
-            status: "waiting",
-            volunteerId: undefined,
-            volunteerName: undefined,
-            volunteerDocId: undefined,
-            updatedAt: Date.now(),
-            timeline: [
-              ...req.timeline,
-              { status: "waiting", at: Date.now(), note: "simulated volunteer removed" },
-            ],
-          });
-        }
-      }
-      await ctx.db.delete(bot._id);
-    }
+    await removeBots(ctx, bots);
     return bots.length;
   },
 });
 
-/** One simulation step. Scheduled by crons.ts; not callable from clients. */
+/** One simulation step. Scheduled by seed and itself; not callable from clients. */
 export const tick = internalMutation({
   args: {},
-  handler: async (ctx) => {
+  handler: async (ctx): Promise<void> => {
     const bots = await ctx.db
       .query("volunteers")
       .withIndex("by_bot", (q) => q.eq("isBot", true))
@@ -115,9 +104,15 @@ export const tick = internalMutation({
     if (!bots.length) return;
 
     const now = Date.now();
-    // Convex schedules crons at its own cadence (observed ~10 s, whatever
-    // we ask for), so distance per tick is speed × time actually elapsed,
-    // capped so a stalled deployment can't teleport a bot on resume.
+    // Time's up, but never pull a bot off a mission it's halfway through.
+    const expired = bots.some((b) => now - b._creationTime > BOT_TTL_MS);
+    if (expired && bots.every((b) => !b.activeRequestId)) {
+      await removeBots(ctx, bots);
+      return;
+    }
+
+    // Distance per tick is speed × time actually elapsed, capped so a
+    // stalled deployment can't teleport a bot on resume.
     const stepFor = (last?: number) =>
       BOT_SPEED_MPS * Math.min(15, Math.max(TICK_SECONDS, (now - (last ?? now)) / 1000));
 
@@ -205,8 +200,45 @@ export const tick = internalMutation({
         lastSeen: now,
       });
     }
+
+    await ctx.scheduler.runAfter(TICK_SECONDS * 1000, internal.bots.tick, {});
   },
 });
+
+/**
+ * Start the loop unless a tick is already queued, so a quick clear-and-reseed
+ * can't leave two loops running.
+ */
+async function ensureTicking(ctx: MutationCtx) {
+  // ponytail: assumes tick is the only scheduled function; match on `name` if another is added.
+  const latest = await ctx.db.system.query("_scheduled_functions").order("desc").first();
+  if (latest?.state.kind !== "pending") {
+    await ctx.scheduler.runAfter(TICK_SECONDS * 1000, internal.bots.tick, {});
+  }
+}
+
+/** Delete these bots and hand any request they were carrying back to the board. */
+async function removeBots(ctx: MutationCtx, bots: Doc<"volunteers">[]) {
+  for (const bot of bots) {
+    if (bot.activeRequestId) {
+      const req = await ctx.db.get(bot.activeRequestId);
+      if (req && req.status !== "delivered" && req.status !== "cancelled") {
+        await ctx.db.patch(req._id, {
+          status: "waiting",
+          volunteerId: undefined,
+          volunteerName: undefined,
+          volunteerDocId: undefined,
+          updatedAt: Date.now(),
+          timeline: [
+            ...req.timeline,
+            { status: "waiting", at: Date.now(), note: "simulated volunteer removed" },
+          ],
+        });
+      }
+    }
+    await ctx.db.delete(bot._id);
+  }
+}
 
 async function advanceRequest(
   ctx: MutationCtx,
