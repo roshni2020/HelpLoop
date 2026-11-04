@@ -84,9 +84,9 @@ export function useRealtime(): RealtimeApi {
   return ctx;
 }
 
-const convexUrl = process.env.NEXT_PUBLIC_CONVEX_URL?.trim();
-// Created once per browser session, outside React, as Convex expects.
-const convexClient = convexUrl ? new ConvexReactClient(convexUrl) : null;
+// ponytail: Convex is off (free plan disabled the deployment), so the site runs on the local
+// shim with no cross-device sync. To restore, create `new ConvexReactClient(url)` here, outside React.
+const convexClient = null as ConvexReactClient | null;
 
 export function RealtimeProvider({ children }: { children: ReactNode }) {
   // The backend choice is fixed by an env var at build time, so the two

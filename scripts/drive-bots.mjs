@@ -1,6 +1,6 @@
 // Bot volunteers, end to end: seed bots, post a request with NO human
 // volunteer online, and watch a bot accept it, ride to the pantry, ride
-// to the requester, and deliver — all driven by the Convex cron.
+// to the requester, and deliver — all driven by the Convex tick loop.
 import { chromium } from "playwright";
 import { mkdirSync } from "node:fs";
 const BASE = process.env.BASE_URL ?? "http://localhost:3000";
