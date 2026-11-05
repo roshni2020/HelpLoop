@@ -148,10 +148,10 @@ function BestMatchCard({
         variant="danger"
         size="md"
         className="mt-3 w-full"
-        disabled={busy}
+        disabled={busy || !resource.address}
         onClick={onRequestHelp}
       >
-        🙋 {cta}
+        {resource.address ? `🙋 ${cta}` : "No confirmed address to send a volunteer to"}
       </Button>
     </div>
   );
@@ -203,10 +203,10 @@ function ResourceRow({
           variant="ghost"
           size="sm"
           className="mt-2.5 w-full"
-          disabled={busy}
+          disabled={busy || !resource.address}
           onClick={onRequestHelp}
         >
-          Request pickup from here instead
+          {resource.address ? "Request pickup from here instead" : "No confirmed address for a pickup"}
         </Button>
       )}
     </div>

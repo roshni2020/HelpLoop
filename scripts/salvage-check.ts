@@ -5,7 +5,7 @@
 // ranking used to be discarded for one unterminated string. These cases
 // pin the salvage behaviour so that never silently returns.
 
-import { extractRankings, rankResources } from "../src/lib/nebius";
+import { capForUnknownHours, extractRankings, rankResources } from "../src/lib/nebius";
 import type { HelpNeed, Resource } from "../src/lib/types";
 
 let bad = 0;
@@ -76,6 +76,14 @@ const res = (id: string, name: string): Resource => ({
   conflicts: [],
   verified: true,
 });
+
+// A place that might be shut tonight can't be shown as a near-certain match.
+check(capForUnknownHours(90, need, { ...res("a", "A"), hours: "" }) === 65, "unknown hours caps the score");
+check(capForUnknownHours(90, need, res("a", "A")) === 90, "known hours leave the score alone");
+check(
+  capForUnknownHours(90, { ...need, urgency: "this-week" }, { ...res("a", "A"), hours: "" }) === 90,
+  "no cap when they can wait a few days",
+);
 
 rankResources(need, [res("a", "A"), res("b", "B"), res("c", "C")], { forceHeuristic: true })
   .then((out) => {

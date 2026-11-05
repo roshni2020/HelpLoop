@@ -35,7 +35,9 @@ function client(): OpenAI {
   return new OpenAI({
     apiKey,
     baseURL: nebiusBase(),
-    timeout: 60_000,
+    // Ranking normally takes ~3 s. Fall back to the heuristic quickly rather
+    // than leave the person watching a silent page for two minutes.
+    timeout: 20_000,
     maxRetries: 1,
   });
 }
@@ -175,6 +177,16 @@ export interface RankResult {
 }
 
 /**
+ * The model sometimes puts a place with unknown hours on top at 85%. Someone
+ * who needs food today could walk there and find it shut, so it can't look
+ * that certain.
+ */
+export function capForUnknownHours(score: number, need: HelpNeed, r: Resource): number {
+  if (need.urgency === "this-week" || parseClosingMinutes(r.hours) !== undefined) return score;
+  return Math.min(score, 65);
+}
+
+/**
  * Rank resources with Nebius Token Factory.
  * Falls back to the transparent heuristic ranker if the key is missing
  * or the call fails, so the product never dead-ends on a bad network.
@@ -231,7 +243,11 @@ export async function rankResources(
       .map((r) => ({
         resourceId: r.resourceId,
         name: byId.get(r.resourceId)!.name,
-        score: Math.max(0, Math.min(100, Math.round(Number(r.score) || 0))),
+        score: capForUnknownHours(
+          Math.max(0, Math.min(100, Math.round(Number(r.score) || 0))),
+          need,
+          byId.get(r.resourceId)!,
+        ),
         reason: String(r.reason ?? "").slice(0, 400),
         concerns: Array.isArray(r.concerns) ? r.concerns.slice(0, 4).map(String) : [],
       }));

@@ -257,7 +257,15 @@ export async function* runResearch(
       icon: "🔎",
     };
 
-    const raws = (await backend.seed(need)).raws.filter((r) => !NOT_A_PLACE_RE.test(r.name));
+    // Linkup sometimes answers "no results" to a query that works seconds
+    // later, so one empty answer isn't enough to tell someone there's nothing.
+    const seed = await backend.seed(need).catch((err) => {
+      if (String(err).includes("SEARCH_QUERY_NO_RESULT")) return backend.seed(need);
+      throw err;
+    });
+    const raws = seed.raws.filter(
+      (r) => !NOT_A_PLACE_RE.test(r.name) && !DIRECTORY_RE.test(r.name),
+    );
     if (!raws.length) {
       yield {
         type: "error",
@@ -504,9 +512,13 @@ export async function* runResearch(
     yield { type: "done", resources, findings };
   } catch (err) {
     console.error("[research] pipeline failed:", err);
+    // The raw upstream error is JSON nobody needing a meal should have to read.
+    const noResults = err instanceof Error && err.message.includes("SEARCH_QUERY_NO_RESULT");
     yield {
       type: "error",
-      message: err instanceof Error ? err.message : "Research failed",
+      message: noResults
+        ? `Nothing came up for ${need.locationText} this time. Try "This week" or a nearby city.`
+        : "The search couldn't finish. Please try again in a moment.",
     };
   }
 }
@@ -519,7 +531,10 @@ const SHELTER_WHO: Record<string, string> = {
 
 /** "Names" a search engine invents when it has a caveat rather than a place. */
 export const NOT_A_PLACE_RE =
-  /\b(?:not confirmed|unconfirmed)\b|^(?:unknown|none|n\/a)\b|^(?:tonight|today)\S*\s.*\b(?:options?|availability)\b/i;
+  /\b(?:not confirmed|unconfirmed)\b|^(?:unknown|none|n\/a)\b|^(?:tonight|today)\S*\s.*\b(?:options?|availability)\b|^no\b.*\b(?:found|available)\b/i;
+
+/** Phone lines and directories: where to look for help, not somewhere to collect it. */
+export const DIRECTORY_RE = /\b211\b|\b(?:directory|locator|hotline|helpline)\b/i;
 
 /** Phrasings a search engine uses to say it found nothing. */
 export const NO_INFO_RE =

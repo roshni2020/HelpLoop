@@ -42,6 +42,8 @@ const INITIAL: ResearchState = {
 };
 
 let lineId = 0;
+/** Longer than ranking's worst case (two 20 s attempts) plus a slow search step. */
+const STALL_MS = 75_000;
 
 /** Consumes the /api/research SSE stream and folds it into view state. */
 export function useResearch() {
@@ -67,6 +69,19 @@ export function useResearch() {
         log: [...s.log, { ...line, id: `l${++lineId}`, at: Date.now() }].slice(-60),
       }));
 
+    // Nothing from the server for this long means the search is stuck: say
+    // so and let them retry instead of leaving a spinner up forever.
+    let stalled = false;
+    let watchdog: ReturnType<typeof setTimeout> | undefined;
+    const arm = () => {
+      clearTimeout(watchdog);
+      watchdog = setTimeout(() => {
+        stalled = true;
+        controller.abort();
+      }, STALL_MS);
+    };
+    arm();
+
     try {
       const res = await fetch("/api/research", {
         method: "POST",
@@ -83,6 +98,7 @@ export function useResearch() {
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
+        arm();
         buffer += decoder.decode(value, { stream: true });
 
         const chunks = buffer.split("\n\n");
@@ -102,10 +118,16 @@ export function useResearch() {
 
       setState((s) => (s.phase === "error" ? s : { ...s, phase: "done" }));
     } catch (err) {
-      if (controller.signal.aborted) return;
-      const message = err instanceof Error ? err.message : "Research failed";
+      if (controller.signal.aborted && !stalled) return;
+      const message = stalled
+        ? "The search stopped responding. Please try again."
+        : err instanceof Error
+          ? err.message
+          : "Research failed";
       setState((s) => ({ ...s, phase: "error", error: message }));
       push({ icon: "⛔", text: message, tone: "error" });
+    } finally {
+      clearTimeout(watchdog);
     }
   }, []);
 

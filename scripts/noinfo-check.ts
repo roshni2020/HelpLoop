@@ -1,6 +1,6 @@
 // A follow-up search that comes back empty must never be shown as a
 // confirmed fact. This pins the phrasings we treat as "nothing found".
-import { NO_INFO_RE, NOT_A_PLACE_RE } from "../src/lib/research";
+import { DIRECTORY_RE, NO_INFO_RE, NOT_A_PLACE_RE } from "../src/lib/research";
 
 const cases: [string, boolean][] = [
   ["The provided information does not contain specific details about eligibility requirements.", true],
@@ -27,14 +27,22 @@ const names: [string, boolean][] = [
   ["Tonight’s options not confirmed", true],
   ["Tonight / current availability", true],
   ["Unknown", true],
+  ["No verified food program was found that is confirmed open tonight (Thursday, November 5, 2026).", true],
+  ["No Kid Hungry", false],
   ["St. Vincent de Paul Dining Room", false],
   ["East Bay Food Not Bombs", false],
   ["Community Kitchens", false],
   ["Healthy Options Food Bank", false],
   ["Today's Harvest Food Pantry", false],
 ];
+// Directories point people elsewhere; a volunteer can't pick food up from one.
+names.push(
+  ["United Way 211 — local food resources", true],
+  ["FoodNow pantry locator", true],
+  ["Alameda County Community Food Bank", false],
+);
 for (const [name, want] of names) {
-  const got = NOT_A_PLACE_RE.test(name);
+  const got = NOT_A_PLACE_RE.test(name) || DIRECTORY_RE.test(name);
   if (got !== want) bad++;
   console.log(`  ${got === want ? "ok  " : "FAIL"} ${String(want).padEnd(5)} ${name}`);
 }
