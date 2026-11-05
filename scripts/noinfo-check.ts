@@ -39,6 +39,7 @@ const names: [string, boolean][] = [
 names.push(
   ["United Way 211 — local food resources", true],
   ["FoodNow pantry locator", true],
+  ["2-1-1 Alameda County", true],
   ["Alameda County Community Food Bank", false],
 );
 for (const [name, want] of names) {

@@ -132,7 +132,10 @@ export function seedQuery(need: HelpNeed): string {
   // Prefer the sources cities actually point residents to — food-bank
   // pantry locators (e.g. FoodNow.net), 211 directories, city service
   // lists — over aggregator blog posts, which are where stale hours live.
-  return `free ${diet}food assistance near ${need.locationText}: food pantries, community kitchens and free meal programs${who[need.who ?? ""] ?? ""} ${when}. Prefer official sources: the regional food bank's pantry directory, the local 211 resource directory, and city government food-assistance pages. Include name, street address, hours of operation, eligibility requirements and whether walk-ins are accepted.`;
+  // No "open tonight": asked that, Linkup returns 2-3 entries led by an invented
+  // "Tonight's options not confirmed" row; without it, 15-23 real places. Hours
+  // are checked afterwards by the follow-ups and the ranker, which know the urgency.
+  return `free ${diet}food assistance near ${need.locationText}: food pantries, community kitchens and free meal programs${who[need.who ?? ""] ?? ""}. Prefer official sources: the regional food bank's pantry directory, the local 211 resource directory, and city government food-assistance pages. Include name, street address, hours of operation, eligibility requirements and whether walk-ins are accepted.`;
 }
 
 function toResource(raw: RawResource, index: number): Resource {
@@ -534,7 +537,7 @@ export const NOT_A_PLACE_RE =
   /\b(?:not confirmed|unconfirmed)\b|^(?:unknown|none|n\/a)\b|^(?:tonight|today)\S*\s.*\b(?:options?|availability)\b|^no\b.*\b(?:found|available)\b/i;
 
 /** Phone lines and directories: where to look for help, not somewhere to collect it. */
-export const DIRECTORY_RE = /\b211\b|\b(?:directory|locator|hotline|helpline)\b/i;
+export const DIRECTORY_RE = /\b2-?1-?1\b|\b(?:directory|locator|hotline|helpline)\b/i;
 
 /** Phrasings a search engine uses to say it found nothing. */
 export const NO_INFO_RE =
