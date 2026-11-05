@@ -1,6 +1,6 @@
 // A follow-up search that comes back empty must never be shown as a
 // confirmed fact. This pins the phrasings we treat as "nothing found".
-import { NO_INFO_RE } from "../src/lib/research";
+import { NO_INFO_RE, NOT_A_PLACE_RE } from "../src/lib/research";
 
 const cases: [string, boolean][] = [
   ["The provided information does not contain specific details about eligibility requirements.", true],
@@ -19,5 +19,23 @@ for (const [text, want] of cases) {
   const got = NO_INFO_RE.test(text);
   if (got !== want) bad++;
   console.log(`  ${got === want ? "ok  " : "FAIL"} ${String(want).padEnd(5)} ${text.slice(0, 72)}`);
+}
+
+// A caveat the search returned in place of a name must never become a
+// listing a volunteer gets sent to. Real names must survive, oddly worded or not.
+const names: [string, boolean][] = [
+  ["Tonight’s options not confirmed", true],
+  ["Tonight / current availability", true],
+  ["Unknown", true],
+  ["St. Vincent de Paul Dining Room", false],
+  ["East Bay Food Not Bombs", false],
+  ["Community Kitchens", false],
+  ["Healthy Options Food Bank", false],
+  ["Today's Harvest Food Pantry", false],
+];
+for (const [name, want] of names) {
+  const got = NOT_A_PLACE_RE.test(name);
+  if (got !== want) bad++;
+  console.log(`  ${got === want ? "ok  " : "FAIL"} ${String(want).padEnd(5)} ${name}`);
 }
 process.exit(bad ? 1 : 0);

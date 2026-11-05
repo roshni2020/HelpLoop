@@ -48,7 +48,7 @@ export default function ResourceResults({
               ? `${shortModel(meta.model)} via Nebius Token Factory · ${meta.latencyMs} ms${
                   meta.costUsd !== undefined ? ` · $${meta.costUsd.toFixed(5)}` : ""
                 }`
-              : "Built-in heuristic ranker — add NEBIUS_API_KEY for model ranking"
+              : "Ranked by distance, hours and fit for your situation"
             : undefined
         }
         right={

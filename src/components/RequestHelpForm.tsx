@@ -44,7 +44,7 @@ export default function RequestHelpForm({
 }) {
   const [need, setNeed] = useState("Dinner tonight");
   const [locationText, setLocationText] = useState("Oakland, CA");
-  const [diet, setDiet] = useState<Diet>("vegetarian");
+  const [diet, setDiet] = useState<Diet>("any");
   const [transport, setTransport] = useState<Transport>("walking");
   const [urgency, setUrgency] = useState<Urgency>("tonight");
   const [notes, setNotes] = useState("");

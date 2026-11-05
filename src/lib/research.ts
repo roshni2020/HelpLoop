@@ -257,7 +257,7 @@ export async function* runResearch(
       icon: "🔎",
     };
 
-    const { raws } = await backend.seed(need);
+    const raws = (await backend.seed(need)).raws.filter((r) => !NOT_A_PLACE_RE.test(r.name));
     if (!raws.length) {
       yield {
         type: "error",
@@ -516,6 +516,10 @@ const SHELTER_WHO: Record<string, string> = {
   senior: " for older adults",
   veteran: " for veterans",
 };
+
+/** "Names" a search engine invents when it has a caveat rather than a place. */
+export const NOT_A_PLACE_RE =
+  /\b(?:not confirmed|unconfirmed)\b|^(?:unknown|none|n\/a)\b|^(?:tonight|today)\S*\s.*\b(?:options?|availability)\b/i;
 
 /** Phrasings a search engine uses to say it found nothing. */
 export const NO_INFO_RE =
